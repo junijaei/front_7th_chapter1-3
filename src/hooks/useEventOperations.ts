@@ -1,6 +1,7 @@
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 
+import { createNonRepeatingRepeatWithEndDate } from '../constants/eventDefaults';
 import { Event, EventForm } from '../types';
 import { generateRepeatEvents } from '../utils/generateRepeatEvents';
 
@@ -44,11 +45,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
         const editingEvent = {
           ...eventData,
           // ! TEST CASE
-          repeat: eventData.repeat ?? {
-            type: 'none',
-            interval: 0,
-            endDate: '',
-          },
+          repeat: eventData.repeat ?? createNonRepeatingRepeatWithEndDate(),
         };
 
         response = await fetch(`/api/events/${(eventData as Event).id}`, {
@@ -87,11 +84,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...eventData,
-          repeat: eventData.repeat ?? {
-            type: 'none',
-            interval: 0,
-            endDate: '',
-          },
+          repeat: eventData.repeat ?? createNonRepeatingRepeatWithEndDate(),
         }),
       });
 

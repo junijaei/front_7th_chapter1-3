@@ -1,3 +1,4 @@
+import { createNonRepeatingRepeat } from '../constants/eventDefaults';
 import { Event } from '../types';
 import { changeEventDate, isValidDropTarget } from '../utils/dragDropUtils';
 import { findOverlappingEvents } from '../utils/eventOverlap';
@@ -52,7 +53,7 @@ export function useDragAndDrop(
     if (draggedEvent.repeat.type !== 'none') {
       updatedEvent = {
         ...updatedEvent,
-        repeat: { type: 'none', interval: 0 },
+        repeat: createNonRepeatingRepeat(),
       };
     }
 

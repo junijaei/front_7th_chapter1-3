@@ -1,5 +1,6 @@
 /* global RequestInit */
 
+import { DEFAULT_REPEAT_CONFIG } from '../constants/eventDefaults';
 import { Event } from '../types';
 import { isRecurringEvent } from '../utils/repeatTypeUtils';
 
@@ -18,14 +19,6 @@ const HTTP_METHODS = {
   PUT: 'PUT',
   DELETE: 'DELETE',
 } as const;
-
-/**
- * Default event repeat configuration for non-recurring events
- */
-const DEFAULT_REPEAT_CONFIG = {
-  type: 'none' as const,
-  interval: 0,
-};
 
 /**
  * Custom hook for managing recurring event operations
