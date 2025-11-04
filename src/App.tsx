@@ -189,18 +189,9 @@ function App() {
     }
   };
 
-  const addOrUpdateEvent = async () => {
-    if (!title || !date || !startTime || !endTime) {
-      enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: 'error' });
-      return;
-    }
-
-    if (startTimeError || endTimeError) {
-      enqueueSnackbar('시간 설정을 확인해주세요.', { variant: 'error' });
-      return;
-    }
-
-    const eventData: Event | EventFormType = {
+  // 이벤트 데이터 빌드
+  const buildEventData = (): Event | EventFormType => {
+    return {
       id: editingEvent ? editingEvent.id : undefined,
       title,
       date,
@@ -218,42 +209,61 @@ function App() {
           },
       notificationTime,
     };
+  };
 
+  // 필수 입력값 검증
+  const validateEventInput = (): boolean => {
+    if (!title || !date || !startTime || !endTime) {
+      enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: 'error' });
+      return false;
+    }
+
+    if (startTimeError || endTimeError) {
+      enqueueSnackbar('시간 설정을 확인해주세요.', { variant: 'error' });
+      return false;
+    }
+
+    return true;
+  };
+
+  // 이벤트 수정 처리
+  const handleEventUpdate = async (eventData: Event | EventFormType) => {
     const overlapping = findOverlappingEvents(eventData, events);
-    const hasOverlapEvent = overlapping.length > 0;
 
-    // 수정
-    if (editingEvent) {
-      if (hasOverlapEvent) {
-        setOverlappingEvents(overlapping);
-        setIsOverlapDialogOpen(true);
-        return;
-      }
-
-      if (
-        editingEvent.repeat.type !== 'none' &&
-        editingEvent.repeat.interval > 0 &&
-        recurringEditMode !== null
-      ) {
-        await handleRecurringEdit(eventData as Event, recurringEditMode);
-        setRecurringEditMode(null);
-      } else {
-        await saveEvent(eventData);
-      }
-
-      resetForm();
+    if (overlapping.length > 0) {
+      setOverlappingEvents(overlapping);
+      setIsOverlapDialogOpen(true);
       return;
     }
 
-    // 생성
+    if (
+      editingEvent &&
+      editingEvent.repeat.type !== 'none' &&
+      editingEvent.repeat.interval > 0 &&
+      recurringEditMode !== null
+    ) {
+      await handleRecurringEdit(eventData as Event, recurringEditMode);
+      setRecurringEditMode(null);
+    } else {
+      await saveEvent(eventData);
+    }
+
+    resetForm();
+  };
+
+  // 이벤트 생성 처리
+  const handleEventCreate = async (eventData: Event | EventFormType) => {
+    // 반복 일정 생성
     if (isRepeating) {
-      // 반복 생성은 반복 일정을 고려하지 않는다.
       await createRepeatEvent(eventData);
       resetForm();
       return;
     }
 
-    if (hasOverlapEvent) {
+    // 단일 일정 생성
+    const overlapping = findOverlappingEvents(eventData, events);
+
+    if (overlapping.length > 0) {
       setOverlappingEvents(overlapping);
       setIsOverlapDialogOpen(true);
       return;
@@ -261,6 +271,21 @@ function App() {
 
     await saveEvent(eventData);
     resetForm();
+  };
+
+  // 일정 추가/수정 메인 함수
+  const addOrUpdateEvent = async () => {
+    if (!validateEventInput()) {
+      return;
+    }
+
+    const eventData = buildEventData();
+
+    if (editingEvent) {
+      await handleEventUpdate(eventData);
+    } else {
+      await handleEventCreate(eventData);
+    }
   };
 
 
@@ -340,22 +365,7 @@ function App() {
               color="error"
               onClick={() => {
                 setIsOverlapDialogOpen(false);
-                saveEvent({
-                  id: editingEvent ? editingEvent.id : undefined,
-                  title,
-                  date,
-                  startTime,
-                  endTime,
-                  description,
-                  location,
-                  category,
-                  repeat: {
-                    type: isRepeating ? repeatType : 'none',
-                    interval: repeatInterval,
-                    endDate: repeatEndDate || undefined,
-                  },
-                  notificationTime,
-                });
+                saveEvent(buildEventData());
               }}
             >
               계속 진행
