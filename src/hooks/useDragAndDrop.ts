@@ -8,20 +8,23 @@ import { findOverlappingEvents } from '../utils/eventOverlap';
  *
  * @param events - 전체 일정 목록
  * @param saveEvent - 일정 저장 함수
- * @param onOverlap - 겹침 발생 시 호출될 콜백 함수
+ * @param onOverlap - 겹침 발생 시 호출될 콜백 함수 (겹친 일정들과 업데이트된 이벤트를 전달)
  * @returns 드래그 앤 드롭 핸들러
  *
  * @example
  * const { handleDragStart, handleDragEnd } = useDragAndDrop(
  *   events,
  *   saveEvent,
- *   (overlaps) => setOverlappingEvents(overlaps)
+ *   (overlaps, updatedEvent) => {
+ *     setOverlappingEvents(overlaps);
+ *     setPendingEvent(updatedEvent);
+ *   }
  * )
  */
 export function useDragAndDrop(
   events: Event[],
   saveEvent: (event: Event) => Promise<void>,
-  onOverlap: (overlaps: Event[]) => void
+  onOverlap: (overlaps: Event[], updatedEvent: Event) => void
 ) {
   /**
    * 드래그 시작 핸들러
@@ -62,7 +65,7 @@ export function useDragAndDrop(
 
     // 겹침이 있으면 콜백 호출 후 종료
     if (overlapping.length > 0) {
-      onOverlap(overlapping);
+      onOverlap(overlapping, updatedEvent);
       return;
     }
 

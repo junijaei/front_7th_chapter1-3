@@ -84,6 +84,7 @@ function App() {
 
   const [isOverlapDialogOpen, setIsOverlapDialogOpen] = useState(false);
   const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
+  const [pendingEvent, setPendingEvent] = useState<Event | null>(null); // 드래그앤드롭으로 업데이트된 이벤트
   const [isRecurringDialogOpen, setIsRecurringDialogOpen] = useState(false);
   const [pendingRecurringEdit, setPendingRecurringEdit] = useState<Event | null>(null);
   const [pendingRecurringDelete, setPendingRecurringDelete] = useState<Event | null>(null);
@@ -104,10 +105,15 @@ function App() {
   );
 
   // 드래그 앤 드롭 훅
-  const { handleDragStart, handleDragEnd } = useDragAndDrop(events, updateEvent, (overlaps) => {
-    setOverlappingEvents(overlaps);
-    setIsOverlapDialogOpen(true);
-  });
+  const { handleDragStart, handleDragEnd } = useDragAndDrop(
+    events,
+    updateEvent,
+    (overlaps, updatedEvent) => {
+      setOverlappingEvents(overlaps);
+      setPendingEvent(updatedEvent);
+      setIsOverlapDialogOpen(true);
+    }
+  );
 
   // dnd-kit 드래그 이벤트 핸들러
   const onDragStart = (event: DragStartEvent) => {
@@ -223,6 +229,7 @@ function App() {
 
     if (overlapping.length > 0) {
       setOverlappingEvents(overlapping);
+      setPendingEvent(null); // 폼에서 발생한 겹침은 pendingEvent 사용 안 함
       setIsOverlapDialogOpen(true);
       return;
     }
@@ -256,6 +263,7 @@ function App() {
 
     if (overlapping.length > 0) {
       setOverlappingEvents(overlapping);
+      setPendingEvent(null); // 폼에서 발생한 겹침은 pendingEvent 사용 안 함
       setIsOverlapDialogOpen(true);
       return;
     }
@@ -341,10 +349,16 @@ function App() {
         <OverlapDialog
           open={isOverlapDialogOpen}
           overlappingEvents={overlappingEvents}
-          onClose={() => setIsOverlapDialogOpen(false)}
-          onConfirm={() => {
+          onClose={() => {
             setIsOverlapDialogOpen(false);
-            saveEvent(buildEventData());
+            setPendingEvent(null);
+          }}
+          onConfirm={async () => {
+            setIsOverlapDialogOpen(false);
+            // 드래그앤드롭으로 업데이트된 이벤트가 있으면 그것을 사용, 없으면 폼 데이터 사용
+            const eventToSave = pendingEvent || buildEventData();
+            await saveEvent(eventToSave);
+            setPendingEvent(null);
           }}
         />
 
