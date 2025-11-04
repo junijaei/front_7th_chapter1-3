@@ -150,10 +150,8 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent, createRepeatEvent, fetchEvents } = useEventOperations(
-    Boolean(editingEvent),
-    () => setEditingEvent(null)
-  );
+  const { events, saveEvent, updateEvent, deleteEvent, createRepeatEvent, fetchEvents } =
+    useEventOperations(Boolean(editingEvent), () => setEditingEvent(null));
 
   const { handleRecurringEdit, handleRecurringDelete } = useRecurringEventOperations(
     events,
@@ -191,18 +189,10 @@ function App() {
   // 드래그 앤 드롭 훅
   const { handleDragStart, handleDragEnd } = useDragAndDrop(
     events,
-    saveEvent,
+    updateEvent,
     (overlaps) => {
       setOverlappingEvents(overlaps);
       setIsOverlapDialogOpen(true);
-    },
-    (event) => {
-      // 반복 일정인 경우 다이얼로그 표시
-      if (isRecurringEvent(event)) {
-        setPendingRecurringEdit(event);
-        setRecurringDialogMode('edit');
-        setIsRecurringDialogOpen(true);
-      }
     }
   );
 
