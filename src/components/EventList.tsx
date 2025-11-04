@@ -33,7 +33,11 @@ export const EventList = ({
   onDeleteEvent,
 }: EventListProps) => {
   return (
-    <Stack data-testid="event-list" spacing={2} sx={{ width: '30%', height: '100%', overflowY: 'auto' }}>
+    <Stack
+      data-testid="event-list"
+      spacing={2}
+      sx={{ width: '30%', height: '100%', overflowY: 'auto' }}
+    >
       <FormControl fullWidth>
         <FormLabel htmlFor="search">일정 검색</FormLabel>
         <TextField
@@ -91,9 +95,8 @@ export const EventList = ({
                 <Typography>
                   알림:{' '}
                   {
-                    notificationOptions.find(
-                      (option) => option.value === event.notificationTime
-                    )?.label
+                    notificationOptions.find((option) => option.value === event.notificationTime)
+                      ?.label
                   }
                 </Typography>
               </Stack>

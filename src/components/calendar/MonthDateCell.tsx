@@ -1,10 +1,10 @@
 import { useDroppable } from '@dnd-kit/core';
 import { TableCell, Typography } from '@mui/material';
 
-import { Event } from '../../types';
-import { getEventsForDay } from '../../utils/dateUtils';
 import { DraggableEvent } from './DraggableEvent';
+import { Event } from '../../types';
 import { calendarCellStyles } from './shared/styles';
+import { getEventsForDay } from '../../utils/dateUtils';
 
 interface MonthDateCellProps {
   day: number;

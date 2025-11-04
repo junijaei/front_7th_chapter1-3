@@ -9,11 +9,11 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Event } from '../../types';
-import { formatDate, formatMonth, getWeeksAtMonth } from '../../utils/dateUtils';
 import { MonthDateCell } from './MonthDateCell';
-import { calendarCellStyles } from './shared/styles';
+import { Event } from '../../types';
 import { WEEK_DAYS } from './shared/constants';
+import { calendarCellStyles } from './shared/styles';
+import { formatDate, formatMonth, getWeeksAtMonth } from '../../utils/dateUtils';
 
 interface MonthViewProps {
   currentDate: Date;

@@ -1,8 +1,8 @@
 import { useDroppable } from '@dnd-kit/core';
 import { TableCell, Typography } from '@mui/material';
 
-import { Event } from '../../types';
 import { DraggableEvent } from './DraggableEvent';
+import { Event } from '../../types';
 import { calendarCellStyles } from './shared/styles';
 
 interface DateCellProps {

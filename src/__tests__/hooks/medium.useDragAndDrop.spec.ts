@@ -49,9 +49,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn().mockResolvedValue(undefined);
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockEvents[0], '2025-10-20');
@@ -67,9 +65,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn().mockResolvedValue(undefined);
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockEvents[0], '2025-10-25');
@@ -88,9 +84,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn().mockResolvedValue(undefined);
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockRecurringEvent, '2025-10-20');
@@ -127,9 +121,7 @@ describe('useDragAndDrop', () => {
       },
     ];
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(eventsWithOverlap, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(eventsWithOverlap, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockEvents[0], '2025-10-20');
@@ -143,9 +135,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn();
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockEvents[0], '');
@@ -159,9 +149,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn();
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -175,9 +163,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn().mockRejectedValue(new Error('Network error'));
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await expect(
       act(async () => {
@@ -190,9 +176,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn();
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     act(() => {
       result.current.handleDragStart(mockEvents[0]);
@@ -206,9 +190,7 @@ describe('useDragAndDrop', () => {
     const saveEvent = vi.fn().mockResolvedValue(undefined);
     const onOverlap = vi.fn();
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(mockEvents, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(mockEvents, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockEvents[0], '2025-10-25');
@@ -245,9 +227,7 @@ describe('useDragAndDrop', () => {
       },
     ];
 
-    const { result } = renderHook(() =>
-      useDragAndDrop(eventsWithOverlap, saveEvent, onOverlap)
-    );
+    const { result } = renderHook(() => useDragAndDrop(eventsWithOverlap, saveEvent, onOverlap));
 
     await act(async () => {
       await result.current.handleDragEnd(mockRecurringEvent, '2025-10-20');

@@ -21,7 +21,6 @@ export const useRecurringEventOperations = (
   events: Event[],
   updateEvents: (events: Event[]) => void
 ) => {
-
   const isSameRecurringSeries = (eventA: Event, eventB: Event): boolean => {
     return (
       eventA.repeat.type === eventB.repeat.type &&

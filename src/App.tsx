@@ -18,6 +18,7 @@ import { EventForm } from './components/EventForm.tsx';
 import { EventList } from './components/EventList.tsx';
 import { OverlapDialog } from './components/OverlapDialog.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
+import { SNACKBAR_VARIANT } from './constants/snackbar.ts';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useDateClick } from './hooks/useDateClick.ts';
 import { useDragAndDrop } from './hooks/useDragAndDrop.ts';
@@ -29,7 +30,6 @@ import { useSearch } from './hooks/useSearch.ts';
 import { Event, EventForm as EventFormType } from './types.ts';
 import { findOverlappingEvents } from './utils/eventOverlap.ts';
 import { isRecurringEvent } from './utils/repeatTypeUtils.ts';
-import { SNACKBAR_VARIANT } from './constants/snackbar.ts';
 
 const categories = ['업무', '개인', '가족', '기타'];
 
@@ -104,14 +104,10 @@ function App() {
   );
 
   // 드래그 앤 드롭 훅
-  const { handleDragStart, handleDragEnd } = useDragAndDrop(
-    events,
-    updateEvent,
-    (overlaps) => {
-      setOverlappingEvents(overlaps);
-      setIsOverlapDialogOpen(true);
-    }
-  );
+  const { handleDragStart, handleDragEnd } = useDragAndDrop(events, updateEvent, (overlaps) => {
+    setOverlappingEvents(overlaps);
+    setIsOverlapDialogOpen(true);
+  });
 
   // dnd-kit 드래그 이벤트 핸들러
   const onDragStart = (event: DragStartEvent) => {
@@ -282,7 +278,6 @@ function App() {
       await handleEventCreate(eventData);
     }
   };
-
 
   return (
     <DndContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
