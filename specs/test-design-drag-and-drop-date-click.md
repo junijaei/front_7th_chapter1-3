@@ -253,34 +253,30 @@ it('단일 일정을 드래그하여 다른 날짜로 이동한다', async () =>
 
 **중요**: dnd-kit는 HTML5 Drag API 대신 `PointerEvent`를 사용합니다.
 
-##### 3.1.2 반복 일정 드래그 + RecurringEventDialog
-- ✅ 반복 일정 드래그 시 다이얼로그 표시
-- ✅ "이 일정만" 선택 시 단일 일정으로 변환 (`repeat.type = 'none'`)
-- ✅ "모든 반복 일정" 선택 시 전체 시리즈 이동
+##### 3.1.2 반복 일정 드래그 - 자동 단일 변환
+- ✅ 반복 일정 드래그 시 다이얼로그 없이 자동으로 단일 일정으로 변환
+- ✅ 드래그된 인스턴스만 `repeat.type = 'none'`으로 설정
+- ✅ 나머지 반복 일정 인스턴스들은 영향받지 않음
 
 **기존 패턴 재사용**:
 ```typescript
-it('반복 일정 드래그 시 RecurringEventDialog가 나타난다', async () => {
-  setupMockHandlerRecurringListUpdate(/* ... */);
+it('반복 일정 드래그 시 자동으로 단일 일정으로 변환된다', async () => {
   const { user } = setup(<App />);
 
   // 반복 일정 드래그
   const recurringEvent = screen.getByText('매일 회의');
   fireEvent.pointerDown(recurringEvent);
 
-  // 다이얼로그 확인
-  expect(screen.getByText('반복 일정 수정')).toBeInTheDocument();
-  expect(screen.getByText('해당 일정만 이동하시겠어요?')).toBeInTheDocument();
-
-  // "예" 선택 (단일 이동)
-  await user.click(screen.getByText('예'));
-
   // 드롭
   const targetCell = screen.getByText('20');
   fireEvent.pointerUp(targetCell);
 
-  // 결과 검증: 단일 일정만 이동되고 repeat.type = 'none'
-  // ...
+  // 결과 검증: 다이얼로그 없이 자동 변환
+  expect(screen.queryByText('반복 일정 수정')).not.toBeInTheDocument();
+
+  // 이동된 일정이 단일 일정으로 변환되었는지 확인
+  const movedEvent = await screen.findByText('매일 회의');
+  // repeat.type = 'none'인지 확인 (반복 아이콘이 없어야 함)
 });
 ```
 
@@ -392,7 +388,7 @@ it('드래그 중 드롭 가능 영역이 하이라이트된다', () => {
 4. ✅ 통합 테스트: 날짜 클릭 기본 동작
 
 ### P1 (중요 - GREEN 후 추가)
-5. ✅ 반복 일정 드래그 + RecurringEventDialog
+5. ✅ 반복 일정 드래그 - 자동 단일 변환
 6. ✅ 겹침 검사 + OverlapDialog
 7. ✅ 네트워크 오류 처리
 
@@ -530,10 +526,11 @@ it('드롭 가능 영역에 호버 시 스타일이 변경된다', () => {
 - 공식 문서 및 예제 참조
 - 필요 시 실제 E2E 테스트 추가 (Playwright)
 
-### 리스크 2: 반복 일정 + 드래그 앤 드롭 조합
+### 리스크 2: 반복 일정 자동 변환
 **완화**:
-- 기존 `RecurringEventDialog` 로직 100% 재사용
-- 통합 테스트에서 시나리오 철저히 검증
+- 단순한 로직으로 다이얼로그 없이 즉시 변환
+- 통합 테스트에서 자동 변환 시나리오 검증
+- 나머지 반복 인스턴스가 영향받지 않는지 확인
 
 ### 리스크 3: 겹침 검사 성능
 **완화**:
@@ -558,7 +555,10 @@ it('드롭 가능 영역에 호버 시 스타일이 변경된다', () => {
 
 ## 문서 버전
 
-- **버전**: 1.0
+- **버전**: 1.1 (반복 일정 드래그 자동 변환)
 - **작성일**: 2025-11-04
+- **최종 업데이트**: 2025-11-04
 - **작성자**: TDD Orchestrator (test-design-strategist)
-- **승인 대기**: 사용자 검토 필요
+- **변경 이력**:
+  - v1.0: 초안 작성
+  - v1.1: 반복 일정 드래그 시 다이얼로그 제거, 자동 단일 변환으로 수정

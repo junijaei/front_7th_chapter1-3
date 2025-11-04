@@ -3,12 +3,12 @@
 ## 질문 및 답변
 
 ### Q1. 드래그 앤 드롭으로 일정을 이동할 때, 반복 일정(recurring event)은 어떻게 처리해야 하나요?
-**답변**: 다이얼로그로 선택
+**답변**: 자동으로 단일 일정 변환
 
-- 반복 일정을 드래그할 때 RecurringEventDialog를 표시하여 사용자가 선택하도록 합니다
-- "이 일정만" 선택 시: 해당 인스턴스만 이동하고 반복 일정에서 제거하여 독립적인 단일 일정으로 변경 (repeat.type = 'none')
-- "모든 반복 일정" 선택 시: 전체 시리즈를 드래그한 만큼 이동
-- 기존 수정/삭제 UX와 동일한 패턴 유지
+- 반복 일정을 드래그할 때 다이얼로그 없이 자동으로 해당 인스턴스만 단일 일정으로 변환합니다
+- 드래그된 인스턴스는 repeat.type = 'none'으로 설정되어 독립적인 일정이 됩니다
+- 나머지 반복 일정 인스턴스들은 영향받지 않고 유지됩니다
+- 드래그 앤 드롭은 빠른 조작을 위한 기능이므로 다이얼로그 없이 즉시 처리합니다
 
 ### Q2. 드래그 앤 드롭으로 일정을 이동할 때, 날짜만 변경할지, 시간도 함께 조정할지 정해주세요.
 **답변**: 날짜만 변경
@@ -104,9 +104,7 @@
   1. 일정 박스에 `draggable="true"` 속성 추가
   2. `onDragStart` 이벤트 핸들러 추가
   3. 드래그 중인 일정 정보를 `dataTransfer` 또는 state에 저장
-  4. 반복 일정 여부 확인
-     - 반복 일정인 경우: RecurringEventDialog 표시하여 "이 일정만" / "모든 반복 일정" 선택 대기
-     - 단일 일정인 경우: 바로 드래그 시작
+  4. 반복 일정 여부 확인 (드롭 시점에 자동 변환 예정)
   5. 시각적 피드백 활성화:
      - 드래그 중인 일정을 고스트 이미지로 표시 (반투명)
      - 원본 위치의 일정을 회색 처리 또는 점선 표시
@@ -127,17 +125,17 @@
   1. 날짜 셀에 `onDrop` 이벤트 핸들러 추가
   2. 드롭된 날짜 추출 (셀의 date 정보)
   3. 드래그한 일정의 date 필드만 변경 (startTime, endTime은 유지)
-  4. 반복 일정 처리:
-     - "이 일정만" 선택된 경우: 해당 인스턴스의 repeat.type을 'none'으로 변경하고 date만 업데이트
-     - "모든 반복 일정" 선택된 경우: `handleRecurringEdit()` 호출하여 전체 시리즈 이동 (날짜 차이만큼 모든 인스턴스 날짜 조정)
+  4. 반복 일정 처리 (자동 단일 변환):
+     - 반복 일정인 경우: 자동으로 해당 인스턴스의 repeat.type을 'none'으로 변경
+     - 날짜 업데이트와 동시에 단일 일정으로 변환
+     - 다이얼로그 표시 없음
   5. 겹침 검사:
      - `findOverlappingEvents()` 호출
      - 겹치는 일정이 있으면 OverlapDialog 표시
      - "취소" 선택 시: 원래 위치로 복원
      - "계속 진행" 선택 시: 일정 업데이트 진행
   6. 서버 업데이트:
-     - 단일 일정: `saveEvent()` 호출
-     - 반복 일정: `handleRecurringEdit()` 호출
+     - `saveEvent()` 호출 (단일 일정으로 변환되었으므로 단일 API 사용)
   7. 시각적 피드백 제거 (하이라이트, 고스트 이미지 등)
 
 ##### 3.1.4 드래그 종료 (dragend)
@@ -207,8 +205,10 @@ interface Event {
   }
   ```
 
-- **반복 일정 전체 이동**: `PUT /api/recurring-events/:repeatId` (기존 API 사용)
-  - 또는 패턴 매칭으로 개별 업데이트
+- **반복 일정 드래그**: `PUT /api/events/:id` (단일 일정으로 변환 후 사용)
+  - 반복 일정을 드래그하면 자동으로 `repeat.type = 'none'`으로 변환
+  - 단일 일정 API를 사용하여 저장
+  - 서버에서는 해당 ID의 일정만 업데이트됨
 
 #### 5.2 날짜 클릭
 - API 호출 없음 (폼 상태만 변경)
@@ -243,9 +243,9 @@ interface Event {
 ### 7. 엣지 케이스 및 예외 처리
 
 #### 7.1 드래그 앤 드롭
-1. **반복 일정 드래그 시 다이얼로그 취소**:
-   - RecurringEventDialog에서 "취소" 선택 시 드래그 작업 중단
-   - 원래 위치 유지
+1. **반복 일정 드래그**:
+   - 자동으로 단일 일정으로 변환되므로 다이얼로그 없음
+   - 나머지 반복 일정 인스턴스는 영향받지 않음
 
 2. **과거 날짜로 드롭**:
    - 제한 없음 (과거 날짜로도 이동 가능)
@@ -256,9 +256,18 @@ interface Event {
 4. **드래그 중 뷰 전환**:
    - 주간 뷰 ↔ 월간 뷰 전환 시 드래그 작업 취소
 
-5. **네트워크 오류**:
-   - 서버 업데이트 실패 시 Snackbar로 오류 메시지 표시
-   - 원래 위치로 복원 (fetchEvents() 호출)
+5. **네트워크 오류 및 에러 핸들링**:
+   - 서버 업데이트 실패 시 Snackbar로 오류 메시지 표시: "일정 저장 중 오류가 발생했습니다"
+   - 원래 위치로 복원 (`fetchEvents()` 호출하여 서버 상태와 동기화)
+   - try-catch로 API 에러를 적절히 처리
+   - 일정 이동 시 반드시 `setEditingEvent(draggedEvent)`를 설정하여 수정 모드 명시
+   - `await saveEvent(updatedEvent)` 호출로 비동기 완료 대기
+   - State 업데이트 시 `events.map(e => e.id === updatedEvent.id ? updatedEvent : e)` 패턴 사용 (복제 방지)
+
+6. **정확한 일정 선택 보장**:
+   - 여러 일정이 겹쳐있을 때 정확한 일정이 드래그되도록 고유 key prop 사용
+   - 이벤트 버블링 제어: `event.stopPropagation()` 사용
+   - 드래그 중인 일정은 z-index를 높여 최상위 표시
 
 #### 7.2 날짜 클릭
 1. **편집 모드 중 날짜 클릭**:
@@ -295,12 +304,10 @@ interface Event {
 1. **단일 일정 드래그**:
    - 단일 일정을 다른 날짜로 드래그하여 날짜만 변경되고 시간은 유지되는지 확인
 
-2. **반복 일정 드래그 - 단일 선택**:
-   - 반복 일정 드래그 시 다이얼로그가 표시되는지 확인
-   - "이 일정만" 선택 후 드래그하여 해당 인스턴스만 이동되고 repeat.type이 'none'이 되는지 확인
-
-3. **반복 일정 드래그 - 전체 선택**:
-   - "모든 반복 일정" 선택 후 드래그하여 전체 시리즈가 이동되는지 확인
+2. **반복 일정 드래그 - 자동 단일 변환**:
+   - 반복 일정을 드래그하여 다른 날짜로 이동
+   - 다이얼로그 없이 자동으로 해당 인스턴스만 단일 일정으로 변환되는지 확인 (repeat.type = 'none')
+   - 나머지 반복 일정 인스턴스들은 영향받지 않고 유지되는지 확인
 
 4. **겹침 경고**:
    - 드롭 대상 날짜에 겹치는 일정이 있을 때 OverlapDialog가 표시되는지 확인
@@ -349,8 +356,9 @@ interface Event {
 2. 단일 일정 드래그 앤 드롭 (구현 난이도: 중간)
 
 #### Phase 2: 반복 일정 및 검증
-3. 반복 일정 드래그 앤 드롭 + 다이얼로그 통합 (구현 난이도: 어려움)
+3. 반복 일정 드래그 앤 드롭 - 자동 단일 변환 (구현 난이도: 쉬움)
 4. 겹침 검사 및 OverlapDialog 통합 (구현 난이도: 중간)
+5. 네트워크 오류 처리 및 복원 로직 (구현 난이도: 중간)
 
 #### Phase 3: 시각적 피드백
 5. 드래그 중 시각적 피드백 (고스트 이미지, 하이라이트 등) (구현 난이도: 중간)
@@ -408,14 +416,8 @@ const [dragOverDate, setDragOverDate] = useState<string | null>(null);
 
 // 드래그 시작 핸들러
 const handleEventDragStart = (event: Event) => {
-  if (isRecurringEvent(event)) {
-    // RecurringEventDialog 표시
-    setPendingRecurringEdit(event);
-    setRecurringDialogMode('edit');
-    setIsRecurringDialogOpen(true);
-  } else {
-    setDraggedEvent(event);
-  }
+  setDraggedEvent(event);
+  // 반복 일정 여부 확인은 드롭 시점에 수행
 };
 
 // 드래그 오버 핸들러
@@ -427,9 +429,16 @@ const handleDragOver = (e: React.DragEvent, date: string) => {
 // 드롭 핸들러
 const handleDrop = async (e: React.DragEvent, newDate: string) => {
   e.preventDefault();
-  if (!draggedEvent) return;
+  if (!draggedEvent || !newDate) return;
 
-  const updatedEvent = { ...draggedEvent, date: newDate };
+  // 반복 일정 자동 변환
+  const updatedEvent = {
+    ...draggedEvent,
+    date: newDate,
+    repeat: isRecurringEvent(draggedEvent)
+      ? { type: 'none', interval: 0 }
+      : draggedEvent.repeat
+  };
 
   // 겹침 검사
   const overlapping = findOverlappingEvents(updatedEvent, events);
@@ -439,9 +448,19 @@ const handleDrop = async (e: React.DragEvent, newDate: string) => {
     return;
   }
 
-  await saveEvent(updatedEvent);
-  setDraggedEvent(null);
-  setDragOverDate(null);
+  // 수정 모드 설정 및 저장
+  setEditingEvent(draggedEvent);
+  try {
+    await saveEvent(updatedEvent);
+    showSnackbar('일정이 수정되었습니다', 'success');
+  } catch (error) {
+    showSnackbar('일정 저장 중 오류가 발생했습니다', 'error');
+    await fetchEvents(); // 서버 상태로 복원
+  } finally {
+    setDraggedEvent(null);
+    setEditingEvent(null);
+    setDragOverDate(null);
+  }
 };
 
 // 날짜 셀 클릭 핸들러
@@ -502,6 +521,13 @@ const handleDateCellClick = (date: string) => {
 
 ## 명세서 버전
 
-- **버전**: 1.0
+- **버전**: 2.0 (명세서 통합 및 정리)
 - **작성일**: 2025-11-03
+- **최종 업데이트**: 2025-11-04
 - **작성자**: Claude (spec-writer agent)
+- **변경 이력**:
+  - v1.0: 초안 작성
+  - v1.1: 버그 수정 사항 추가
+  - v1.2: 버그 내역 정리
+  - v1.3: 반복 일정 드래그 시 다이얼로그 제거, 자동 단일 변환
+  - v2.0: 버그 관련 별도 섹션 제거, 주요 기능 명세에 통합 및 상세화
