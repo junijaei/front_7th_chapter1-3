@@ -32,6 +32,7 @@ export function useDragAndDrop(
 
   /**
    * 드롭 완료 핸들러
+   * - 같은 날짜에 드롭하면 아무 동작도 하지 않음
    * - 날짜만 변경하고 시간은 유지
    * - 반복 일정은 자동으로 단일 일정으로 변환
    * - 겹침 검사 수행
@@ -40,6 +41,9 @@ export function useDragAndDrop(
    */
   const handleDragEnd = async (draggedEvent: Event, newDate: string) => {
     if (!draggedEvent || !isValidDropTarget(newDate)) return;
+
+    // 같은 날짜에 드롭하면 아무 동작도 하지 않음
+    if (draggedEvent.date === newDate) return;
 
     // 날짜 변경 및 반복 일정 자동 단일 변환
     let updatedEvent = changeEventDate(draggedEvent, newDate);
