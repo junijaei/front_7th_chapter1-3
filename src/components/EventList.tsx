@@ -10,7 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Event, RepeatType } from '../types.ts';
+import { Event } from '../types.ts';
+import { getRepeatTypeLabel } from '../utils/repeatTypeUtils';
 
 interface EventListProps {
   searchTerm: string;
@@ -21,21 +22,6 @@ interface EventListProps {
   onEditEvent: (event: Event) => void;
   onDeleteEvent: (event: Event) => void;
 }
-
-const getRepeatTypeLabel = (type: RepeatType): string => {
-  switch (type) {
-    case 'daily':
-      return '일';
-    case 'weekly':
-      return '주';
-    case 'monthly':
-      return '월';
-    case 'yearly':
-      return '년';
-    default:
-      return '';
-  }
-};
 
 export const EventList = ({
   searchTerm,

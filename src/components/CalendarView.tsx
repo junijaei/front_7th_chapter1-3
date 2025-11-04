@@ -1,4 +1,4 @@
-import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import { Notifications, Repeat } from '@mui/icons-material';
 import {
   Box,
@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Event, RepeatType } from '../types';
+import { Event } from '../types';
 import {
   formatDate,
   formatMonth,
@@ -22,6 +22,7 @@ import {
   getWeekDates,
   getWeeksAtMonth,
 } from '../utils/dateUtils';
+import { getRepeatTypeLabel } from '../utils/repeatTypeUtils';
 
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -47,21 +48,6 @@ const eventBoxStyles = {
   },
 };
 
-const getRepeatTypeLabel = (type: RepeatType): string => {
-  switch (type) {
-    case 'daily':
-      return '일';
-    case 'weekly':
-      return '주';
-    case 'monthly':
-      return '월';
-    case 'yearly':
-      return '년';
-    default:
-      return '';
-  }
-};
-
 interface CalendarViewProps {
   view: 'week' | 'month';
   currentDate: Date;
@@ -70,6 +56,7 @@ interface CalendarViewProps {
   holidays: Record<string, string>;
   onDateCellClick: (dateString: string) => void;
   onEditEvent: (event: Event) => void;
+  activeEvent: Event | null;
 }
 
 export const CalendarView = ({
@@ -80,6 +67,7 @@ export const CalendarView = ({
   holidays,
   onDateCellClick,
   onEditEvent,
+  activeEvent,
 }: CalendarViewProps) => {
   // 날짜 셀 컴포넌트 (드롭 가능) - 주간 뷰용
   const DateCell = ({ date, dateString }: { date: Date; dateString: string }) => {
@@ -314,6 +302,42 @@ export const CalendarView = ({
     <>
       {view === 'week' && renderWeekView()}
       {view === 'month' && renderMonthView()}
+
+      {/* 드래그 중 시각적 피드백 */}
+      <DragOverlay>
+        {activeEvent ? (
+          <Box
+            sx={{
+              p: 0.5,
+              my: 0.5,
+              borderRadius: 1,
+              minHeight: '18px',
+              width: '100%',
+              overflow: 'hidden',
+              backgroundColor: '#f5f5f5',
+              fontWeight: 'normal',
+              color: 'inherit',
+              opacity: 0.8,
+              boxShadow: 3,
+            }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center">
+              {activeEvent.repeat.type !== 'none' && (
+                <Tooltip
+                  title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(activeEvent.repeat.type)}마다 반복${
+                    activeEvent.repeat.endDate ? ` (종료: ${activeEvent.repeat.endDate})` : ''
+                  }`}
+                >
+                  <Repeat fontSize="small" />
+                </Tooltip>
+              )}
+              <Typography variant="caption" noWrap sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}>
+                {activeEvent.title}
+              </Typography>
+            </Stack>
+          </Box>
+        ) : null}
+      </DragOverlay>
     </>
   );
 };

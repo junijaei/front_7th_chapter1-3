@@ -1,6 +1,7 @@
 /* global RequestInit */
 
 import { Event } from '../types';
+import { isRecurringEvent } from '../utils/repeatTypeUtils';
 
 /**
  * API endpoints for recurring event operations
@@ -34,9 +35,6 @@ export const useRecurringEventOperations = (
   events: Event[],
   updateEvents: (events: Event[]) => void
 ) => {
-  const isRecurringEvent = (event: Event): boolean => {
-    return event.repeat.type !== 'none' && event.repeat.interval > 0;
-  };
 
   const isSameRecurringSeries = (eventA: Event, eventB: Event): boolean => {
     return (

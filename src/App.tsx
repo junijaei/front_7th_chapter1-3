@@ -1,5 +1,5 @@
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
-import { ChevronLeft, ChevronRight, Close, Repeat } from '@mui/icons-material';
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { ChevronLeft, ChevronRight, Close } from '@mui/icons-material';
 import {
   Alert,
   AlertTitle,
@@ -32,8 +32,9 @@ import { useEventOperations } from './hooks/useEventOperations.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
 import { useRecurringEventOperations } from './hooks/useRecurringEventOperations.ts';
 import { useSearch } from './hooks/useSearch.ts';
-import { Event, EventForm as EventFormType, RepeatType } from './types.ts';
+import { Event, EventForm as EventFormType } from './types.ts';
 import { findOverlappingEvents } from './utils/eventOverlap.ts';
+import { isRecurringEvent } from './utils/repeatTypeUtils.ts';
 
 const categories = ['업무', '개인', '가족', '기타'];
 
@@ -44,21 +45,6 @@ const notificationOptions = [
   { value: 120, label: '2시간 전' },
   { value: 1440, label: '1일 전' },
 ];
-
-const getRepeatTypeLabel = (type: RepeatType): string => {
-  switch (type) {
-    case 'daily':
-      return '일';
-    case 'weekly':
-      return '주';
-    case 'monthly':
-      return '월';
-    case 'yearly':
-      return '년';
-    default:
-      return '';
-  }
-};
 
 function App() {
   const formState = useEventForm();
@@ -177,10 +163,6 @@ function App() {
       setIsRecurringDialogOpen(false);
       setPendingRecurringDelete(null);
     }
-  };
-
-  const isRecurringEvent = (event: Event): boolean => {
-    return event.repeat.type !== 'none' && event.repeat.interval > 0;
   };
 
   const handleEditEvent = (event: Event) => {
@@ -326,6 +308,7 @@ function App() {
               holidays={holidays}
               onDateCellClick={handleDateCellClick}
               onEditEvent={handleEditEvent}
+              activeEvent={activeEvent}
             />
           </Stack>
 
@@ -414,42 +397,6 @@ function App() {
           </Stack>
         )}
       </Box>
-
-      {/* 드래그 중 시각적 피드백 */}
-      <DragOverlay>
-        {activeEvent ? (
-          <Box
-            sx={{
-              p: 0.5,
-              my: 0.5,
-              borderRadius: 1,
-              minHeight: '18px',
-              width: '100%',
-              overflow: 'hidden',
-              backgroundColor: '#f5f5f5',
-              fontWeight: 'normal',
-              color: 'inherit',
-              opacity: 0.8,
-              boxShadow: 3,
-            }}
-          >
-            <Stack direction="row" spacing={1} alignItems="center">
-              {activeEvent.repeat.type !== 'none' && (
-                <Tooltip
-                  title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(activeEvent.repeat.type)}마다 반복${
-                    activeEvent.repeat.endDate ? ` (종료: ${activeEvent.repeat.endDate})` : ''
-                  }`}
-                >
-                  <Repeat fontSize="small" />
-                </Tooltip>
-              )}
-              <Typography variant="caption" noWrap sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}>
-                {activeEvent.title}
-              </Typography>
-            </Stack>
-          </Box>
-        ) : null}
-      </DragOverlay>
     </DndContext>
   );
 }
