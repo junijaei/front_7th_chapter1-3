@@ -1,16 +1,9 @@
 /* global RequestInit */
 
+import { API_ENDPOINTS } from '../constants/api';
 import { DEFAULT_REPEAT_CONFIG } from '../constants/eventDefaults';
 import { Event } from '../types';
 import { isRecurringEvent } from '../utils/repeatTypeUtils';
-
-/**
- * API endpoints for recurring event operations
- */
-const API_ENDPOINTS = {
-  events: '/api/events',
-  recurringEvents: '/api/recurring-events',
-} as const;
 
 /**
  * HTTP method constants
@@ -78,15 +71,15 @@ export const useRecurringEventOperations = (
   };
 
   const updateEventOnServer = async (event: Event): Promise<boolean> => {
-    return makeApiRequest(`${API_ENDPOINTS.events}/${event.id}`, HTTP_METHODS.PUT, event);
+    return makeApiRequest(API_ENDPOINTS.EVENT_BY_ID(event.id), HTTP_METHODS.PUT, event);
   };
 
   const deleteEventOnServer = async (eventId: string): Promise<boolean> => {
-    return makeApiRequest(`${API_ENDPOINTS.events}/${eventId}`, HTTP_METHODS.DELETE);
+    return makeApiRequest(API_ENDPOINTS.EVENT_BY_ID(eventId), HTTP_METHODS.DELETE);
   };
 
   const deleteRecurringEventOnServer = async (repeatId: string): Promise<boolean> => {
-    return makeApiRequest(`${API_ENDPOINTS.recurringEvents}/${repeatId}`, HTTP_METHODS.DELETE);
+    return makeApiRequest(API_ENDPOINTS.RECURRING_EVENT_BY_ID(repeatId), HTTP_METHODS.DELETE);
   };
 
   const updateRecurringEventOnServer = async (
@@ -94,7 +87,7 @@ export const useRecurringEventOperations = (
     updateData: Partial<Event>
   ): Promise<boolean> => {
     return makeApiRequest(
-      `${API_ENDPOINTS.recurringEvents}/${repeatId}`,
+      API_ENDPOINTS.RECURRING_EVENT_BY_ID(repeatId),
       HTTP_METHODS.PUT,
       updateData
     );

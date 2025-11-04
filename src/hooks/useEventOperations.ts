@@ -1,6 +1,7 @@
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 
+import { API_ENDPOINTS } from '../constants/api';
 import { createNonRepeatingRepeatWithEndDate } from '../constants/eventDefaults';
 import { SNACKBAR_VARIANT } from '../constants/snackbar';
 import { Event, EventForm } from '../types';
@@ -27,7 +28,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/events');
+      const response = await fetch(API_ENDPOINTS.EVENTS);
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
@@ -49,13 +50,13 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
           repeat: eventData.repeat ?? createNonRepeatingRepeatWithEndDate(),
         };
 
-        response = await fetch(`/api/events/${(eventData as Event).id}`, {
+        response = await fetch(API_ENDPOINTS.EVENT_BY_ID((eventData as Event).id), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editingEvent),
         });
       } else {
-        response = await fetch('/api/events', {
+        response = await fetch(API_ENDPOINTS.EVENTS, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(eventData),
@@ -80,7 +81,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
   // 드래그 앤 드롭 등에서 사용할 별도의 업데이트 함수
   const updateEvent = async (eventData: Event) => {
     try {
-      const response = await fetch(`/api/events/${eventData.id}`, {
+      const response = await fetch(API_ENDPOINTS.EVENT_BY_ID(eventData.id), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,7 +104,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
 
   const deleteEvent = async (id: string) => {
     try {
-      const response = await fetch(`/api/events/${id}`, { method: 'DELETE' });
+      const response = await fetch(API_ENDPOINTS.EVENT_BY_ID(id), { method: 'DELETE' });
 
       if (!response.ok) {
         throw new Error('Failed to delete event');
@@ -120,7 +121,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
   const createRepeatEvent = async (eventData: EventForm) => {
     try {
       const newEvents = generateRepeatEvents(eventData);
-      const response = await fetch('/api/events-list', {
+      const response = await fetch(API_ENDPOINTS.EVENTS_LIST, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ events: newEvents }),
