@@ -29,6 +29,7 @@ import { useSearch } from './hooks/useSearch.ts';
 import { Event, EventForm as EventFormType } from './types.ts';
 import { findOverlappingEvents } from './utils/eventOverlap.ts';
 import { isRecurringEvent } from './utils/repeatTypeUtils.ts';
+import { SNACKBAR_VARIANT } from './constants/snackbar.ts';
 
 const categories = ['업무', '개인', '가족', '기타'];
 
@@ -149,10 +150,10 @@ function App() {
       // 반복 일정 삭제 처리
       try {
         await handleRecurringDelete(pendingRecurringDelete, editSingleOnly);
-        enqueueSnackbar('일정이 삭제되었습니다', { variant: 'success' });
+        enqueueSnackbar('일정이 삭제되었습니다', { variant: SNACKBAR_VARIANT.SUCCESS });
       } catch (error) {
         console.error(error);
-        enqueueSnackbar('일정 삭제 실패', { variant: 'error' });
+        enqueueSnackbar('일정 삭제 실패', { variant: SNACKBAR_VARIANT.ERROR });
       }
       setIsRecurringDialogOpen(false);
       setPendingRecurringDelete(null);
@@ -208,12 +209,12 @@ function App() {
   // 필수 입력값 검증
   const validateEventInput = (): boolean => {
     if (!title || !date || !startTime || !endTime) {
-      enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: 'error' });
+      enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: SNACKBAR_VARIANT.ERROR });
       return false;
     }
 
     if (startTimeError || endTimeError) {
-      enqueueSnackbar('시간 설정을 확인해주세요.', { variant: 'error' });
+      enqueueSnackbar('시간 설정을 확인해주세요.', { variant: SNACKBAR_VARIANT.ERROR });
       return false;
     }
 

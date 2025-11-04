@@ -2,6 +2,7 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 
 import { createNonRepeatingRepeatWithEndDate } from '../constants/eventDefaults';
+import { SNACKBAR_VARIANT } from '../constants/snackbar';
 import { Event, EventForm } from '../types';
 import { generateRepeatEvents } from '../utils/generateRepeatEvents';
 
@@ -34,7 +35,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
       setEvents(events);
     } catch (error) {
       console.error('Error fetching events:', error);
-      enqueueSnackbar(ERROR_MESSAGES.FETCH_FAILED, { variant: 'error' });
+      enqueueSnackbar(ERROR_MESSAGES.FETCH_FAILED, { variant: SNACKBAR_VARIANT.ERROR });
     }
   };
 
@@ -68,11 +69,11 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
       await fetchEvents();
       onSave?.();
       enqueueSnackbar(editing ? SUCCESS_MESSAGES.EVENT_UPDATED : SUCCESS_MESSAGES.EVENT_ADDED, {
-        variant: 'success',
+        variant: SNACKBAR_VARIANT.SUCCESS,
       });
     } catch (error) {
       console.error('Error saving event:', error);
-      enqueueSnackbar(ERROR_MESSAGES.SAVE_FAILED, { variant: 'error' });
+      enqueueSnackbar(ERROR_MESSAGES.SAVE_FAILED, { variant: SNACKBAR_VARIANT.ERROR });
     }
   };
 
@@ -109,10 +110,10 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
       }
 
       await fetchEvents();
-      enqueueSnackbar(SUCCESS_MESSAGES.EVENT_DELETED, { variant: 'info' });
+      enqueueSnackbar(SUCCESS_MESSAGES.EVENT_DELETED, { variant: SNACKBAR_VARIANT.INFO });
     } catch (error) {
       console.error('Error deleting event:', error);
-      enqueueSnackbar(ERROR_MESSAGES.DELETE_FAILED, { variant: 'error' });
+      enqueueSnackbar(ERROR_MESSAGES.DELETE_FAILED, { variant: SNACKBAR_VARIANT.ERROR });
     }
   };
 
