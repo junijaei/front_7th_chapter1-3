@@ -9,3 +9,5 @@ node_modules
 /allure-results/
 /.allure/
 src/__mocks__/response/*.json
+*storybook.log
+storybook-static
