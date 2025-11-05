@@ -8,3 +8,4 @@ node_modules
 /.local-browsers/
 /allure-results/
 /.allure/
+src/__mocks__/response/*.json
