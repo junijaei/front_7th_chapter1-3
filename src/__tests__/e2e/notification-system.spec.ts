@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { resetDatabase, createEvent, expectEventInList } from './helpers';
 
 /**
@@ -21,6 +22,7 @@ test.describe('알림 시스템', () => {
   test.beforeEach(async ({ page, request }) => {
     // Given: 데이터베이스 초기화
     await resetDatabase(request);
+    await page.clock.install({ time: new Date('2024-11-07') });
 
     // When: 애플리케이션 페이지 로드
     await page.goto('/');
@@ -115,9 +117,7 @@ test.describe('알림 시스템', () => {
   });
 
   test.describe('2. 알림 표시', () => {
-    test('2.1 알림 시간이 되면 이벤트 리스트에 알림 아이콘이 표시되어야 함', async ({
-      page,
-    }) => {
+    test('2.1 알림 시간이 되면 이벤트 리스트에 알림 아이콘이 표시되어야 함', async ({ page }) => {
       // Given: 현재 시간으로부터 1분 후 일정 생성
       const now = new Date();
       const startTime = new Date(now.getTime() + 2 * 60000); // 2분 후
@@ -291,9 +291,7 @@ test.describe('알림 시스템', () => {
   });
 
   test.describe('4. 알림 없는 일정', () => {
-    test('4.1 알림을 설정하지 않은 일정은 알림 아이콘이 표시되지 않아야 함', async ({
-      page,
-    }) => {
+    test('4.1 알림을 설정하지 않은 일정은 알림 아이콘이 표시되지 않아야 함', async ({ page }) => {
       // Given: 알림 없는 일정 생성
       await createEvent(page, {
         title: '알림 없음',

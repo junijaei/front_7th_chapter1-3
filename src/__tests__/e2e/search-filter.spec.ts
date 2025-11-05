@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { resetDatabase, createEvent, switchView } from './helpers';
 
 /**
@@ -26,6 +27,7 @@ test.describe('검색 및 필터링', () => {
   test.beforeEach(async ({ page, request }) => {
     // Given: 데이터베이스 초기화
     await resetDatabase(request);
+    await page.clock.install({ time: new Date('2024-11-07') });
 
     // When: 애플리케이션 페이지 로드
     await page.goto('/');

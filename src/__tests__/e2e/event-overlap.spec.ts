@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { resetDatabase, createEvent, expectEventInList } from './helpers';
 
 /**
@@ -24,6 +25,7 @@ test.describe('일정 겹침 처리', () => {
   test.beforeEach(async ({ page, request }) => {
     // Given: 데이터베이스 초기화
     await resetDatabase(request);
+    await page.clock.install({ time: new Date('2024-11-07') });
 
     // When: 애플리케이션 페이지 로드
     await page.goto('/');
@@ -178,7 +180,9 @@ test.describe('일정 겹침 처리', () => {
       await expect(page.getByText('회의 1')).toBeVisible();
     });
 
-    test('2.2 수정 시 겹침 경고에서 "계속 진행"을 선택하면 변경이 저장되어야 함', async ({ page }) => {
+    test('2.2 수정 시 겹침 경고에서 "계속 진행"을 선택하면 변경이 저장되어야 함', async ({
+      page,
+    }) => {
       // Given: 두 개의 일정 생성
       await createEvent(page, {
         title: '워크숍',
@@ -213,7 +217,9 @@ test.describe('일정 겹침 처리', () => {
   });
 
   test.describe('3. 드래그앤드롭 시 겹침 감지', () => {
-    test('3.1 드래그앤드롭으로 일정을 이동할 때 겹침이 발생하면 경고가 표시되어야 함', async ({ page }) => {
+    test('3.1 드래그앤드롭으로 일정을 이동할 때 겹침이 발생하면 경고가 표시되어야 함', async ({
+      page,
+    }) => {
       // Given: 같은 시간에 다른 날짜의 일정 두 개 생성
       await createEvent(page, {
         title: '회의 목요일',
@@ -234,7 +240,10 @@ test.describe('일정 겹침 처리', () => {
       const fridayEvent = weekView.getByText('회의 금요일').first();
 
       // 목요일 셀 찾기
-      const thursdayCell = page.locator('td').filter({ has: page.locator('text="7"') }).first();
+      const thursdayCell = page
+        .locator('td')
+        .filter({ has: page.locator('text="7"') })
+        .first();
 
       await fridayEvent.dragTo(thursdayCell);
       await page.waitForTimeout(1000);
@@ -243,7 +252,9 @@ test.describe('일정 겹침 처리', () => {
       await expect(page.getByText('일정 겹침 경고')).toBeVisible({ timeout: 5000 });
     });
 
-    test('3.2 드래그앤드롭 겹침 경고에서 "계속 진행"을 선택하면 이동이 완료되어야 함', async ({ page }) => {
+    test('3.2 드래그앤드롭 겹침 경고에서 "계속 진행"을 선택하면 이동이 완료되어야 함', async ({
+      page,
+    }) => {
       // Given: 같은 시간에 다른 날짜의 일정 두 개 생성
       await createEvent(page, {
         title: '일정 A',
@@ -262,7 +273,10 @@ test.describe('일정 겹침 처리', () => {
       // When: 주간 뷰에서 금요일 일정을 목요일로 드래그
       const weekView = page.getByTestId('week-view');
       const fridayEvent = weekView.getByText('일정 B').first();
-      const thursdayCell = page.locator('td').filter({ has: page.locator('text="7"') }).first();
+      const thursdayCell = page
+        .locator('td')
+        .filter({ has: page.locator('text="7"') })
+        .first();
 
       await fridayEvent.dragTo(thursdayCell);
       await page.waitForTimeout(1000);

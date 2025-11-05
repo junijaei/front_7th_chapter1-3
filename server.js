@@ -191,6 +191,15 @@ app.delete('/api/recurring-events/:repeatId', async (req, res) => {
   res.status(204).send();
 });
 
+// E2E 테스트용 DB 초기화 엔드포인트
+app.put('/api/test/reset', (req, res) => {
+  fs.writeFileSync(
+    `${__dirname}/src/__mocks__/response/${dbName}`,
+    JSON.stringify({ events: [] })
+  );
+  res.status(200).json({ message: 'Database reset successfully' });
+});
+
 app.listen(port, () => {
   if (!fs.existsSync(`${__dirname}/src/__mocks__/response/${dbName}`)) {
     fs.writeFileSync(

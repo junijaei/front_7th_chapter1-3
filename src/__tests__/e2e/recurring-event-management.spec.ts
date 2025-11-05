@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { resetDatabase, expectEventInList, expectSnackbarMessage } from './helpers';
 
 /**
@@ -23,6 +24,7 @@ test.describe('반복 일정 관리', () => {
   test.beforeEach(async ({ page, request }) => {
     // Given: 데이터베이스 초기화
     await resetDatabase(request);
+    await page.clock.install({ time: new Date('2024-11-07') });
 
     // When: 애플리케이션 페이지 로드
     await page.goto('/');
