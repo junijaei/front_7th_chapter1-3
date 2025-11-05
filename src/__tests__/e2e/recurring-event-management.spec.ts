@@ -15,6 +15,9 @@ import { resetDatabase, expectEventInList } from './helpers';
 const FIXED_DATE = '2024-11-07';
 
 test.describe('반복 일정 관리', () => {
+  // 순차 실행으로 API 충돌 방지
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page, request }) => {
     await resetDatabase(request);
     await page.clock.install({ time: new Date('2024-11-07') });
@@ -72,7 +75,7 @@ test.describe('반복 일정 관리', () => {
 
     // When: 단일 인스턴스만 수정
     await page.getByRole('button', { name: 'Edit event' }).first().click();
-    await expect(page.getByText('반복 일정 편집')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('반복 일정 수정')).toBeVisible({ timeout: 5000 });
     await page.getByRole('button', { name: '예' }).click();
 
     await page.getByLabel('제목').fill('팀 스탠드업 (변경됨)');
@@ -106,7 +109,7 @@ test.describe('반복 일정 관리', () => {
 
     // When: 전체 시리즈 수정
     await page.getByRole('button', { name: 'Edit event' }).first().click();
-    await expect(page.getByText('반복 일정 편집')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('반복 일정 수정')).toBeVisible({ timeout: 5000 });
     await page.getByRole('button', { name: '아니오' }).click();
 
     await page.getByLabel('제목').fill('주간 회고');

@@ -13,6 +13,9 @@ import { resetDatabase, createEvent, expectEventInList } from './helpers';
 const FIXED_DATE = '2024-11-07';
 
 test.describe('일정 겹침 처리', () => {
+  // 순차 실행으로 API 충돌 방지
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page, request }) => {
     await resetDatabase(request);
     await page.clock.install({ time: new Date('2024-11-07') });

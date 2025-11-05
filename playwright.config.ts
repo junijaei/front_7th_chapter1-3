@@ -7,14 +7,14 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './src/__tests__/e2e',
 
-  /* 병렬 실행 설정 */
-  fullyParallel: true,
+  /* 병렬 실행 비활성화 (API 충돌 방지) */
+  fullyParallel: false,
 
   /* CI에서 재시도 설정 */
   retries: process.env.CI ? 2 : 0,
 
-  /* 워커 설정 */
-  workers: process.env.CI ? 1 : undefined,
+  /* 워커 설정 - 순차 실행으로 API 충돌 방지 */
+  workers: 1,
 
   /* 리포터 설정 */
   reporter: 'html',

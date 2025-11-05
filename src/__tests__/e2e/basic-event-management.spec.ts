@@ -18,6 +18,9 @@ import {
  */
 
 test.describe('기본 일정 관리', () => {
+  // 순차 실행으로 API 충돌 방지
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page, request }) => {
     await resetDatabase(request);
     await page.clock.install({ time: new Date('2024-11-07') });
