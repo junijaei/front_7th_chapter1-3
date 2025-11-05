@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './src/__tests__/e2e',
 
   /* 병렬 실행 설정 */
   fullyParallel: true,
@@ -36,11 +36,13 @@ export default defineConfig({
 
   /* 테스트 전 개발 서버 실행 */
   webServer: {
-    command: 'pnpm dev',
+    /* E2E 테스트용 서버 (백엔드 + 프론트엔드) */
+    command: 'TEST_ENV=e2e pnpm dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',
     stderr: 'pipe',
+    timeout: 120000,
   },
 
   /* 프로젝트 설정 (브라우저별) */
