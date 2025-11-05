@@ -10,18 +10,22 @@ interface DateCellProps {
   dateString: string;
   filteredEvents: Event[];
   notifiedEvents: string[];
+  holiday?: string;
   onDateCellClick: (dateString: string) => void;
   onEditEvent: (event: Event) => void;
 }
 
 /**
- * 주간 뷰용 날짜 셀 컴포넌트 (드롭 가능)
+ * 캘린더 날짜 셀 컴포넌트 (주간 뷰 & 월간 뷰 공통)
+ * - 드래그앤드롭 지원
+ * - 공휴일 표시
  */
 export const DateCell = ({
   date,
   dateString,
   filteredEvents,
   notifiedEvents,
+  holiday,
   onDateCellClick,
   onEditEvent,
 }: DateCellProps) => {
@@ -36,6 +40,7 @@ export const DateCell = ({
   return (
     <TableCell
       ref={setNodeRef}
+      data-date={dateString}
       onClick={(e) => {
         // 일정 박스가 아닌 빈 영역 클릭 시에만 처리
         if (e.target === e.currentTarget || (e.target as HTMLElement).closest('.date-number')) {
@@ -44,12 +49,18 @@ export const DateCell = ({
       }}
       sx={{
         ...calendarCellStyles,
+        position: 'relative',
         backgroundColor: isOver ? '#e3f2fd' : 'transparent',
       }}
     >
       <Typography variant="body2" fontWeight="bold" className="date-number">
         {date.getDate()}
       </Typography>
+      {holiday && (
+        <Typography variant="body2" color="error">
+          {holiday}
+        </Typography>
+      )}
       {eventsForDay.map((event) => (
         <DraggableEvent
           key={event.id}

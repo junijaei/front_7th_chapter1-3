@@ -6,7 +6,6 @@ import {
   expectEventInMonthView,
   expectEventInWeekView,
   expectSnackbarMessage,
-  findEventInList,
   resetDatabase,
   switchView,
 } from './helpers';
@@ -21,15 +20,22 @@ import {
  */
 
 test.describe('기본 일정 관리', () => {
+  // 테스트를 순차적으로 실행하여 데이터 격리 보장
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page, request }) => {
     // Given: 데이터베이스 초기화
     await resetDatabase(request);
+    await page.clock.install({ time: new Date('2024-11-07') });
 
     // When: 애플리케이션 페이지 로드
     await page.goto('/');
 
     // Then: 페이지가 정상적으로 로드됨
     await expect(page.getByRole('heading', { name: '일정 추가' })).toBeVisible();
+
+    // 페이지 완전 로드 대기
+    await page.waitForLoadState('networkidle');
   });
 
   test.describe('1. 일정 생성 (Create)', () => {
@@ -125,22 +131,22 @@ test.describe('기본 일정 관리', () => {
     });
 
     test('Week/Month 뷰 전환', async ({ page }) => {
-      // Given: 초기 상태 (week 뷰)
-      await expect(page.getByTestId('week-view')).toBeVisible();
-
-      // When: Month 뷰로 전환
-      await switchView(page, 'month');
-
-      // Then: Month 뷰가 표시됨
+      // Given: 초기 상태 (month 뷰)
       await expect(page.getByTestId('month-view')).toBeVisible();
-      await expect(page.getByTestId('week-view')).not.toBeVisible();
 
-      // When: Week 뷰로 다시 전환
+      // When: Week 뷰로 전환
       await switchView(page, 'week');
 
       // Then: Week 뷰가 표시됨
       await expect(page.getByTestId('week-view')).toBeVisible();
       await expect(page.getByTestId('month-view')).not.toBeVisible();
+
+      // When: Month 뷰로 다시 전환
+      await switchView(page, 'month');
+
+      // Then: Month 뷰가 표시됨
+      await expect(page.getByTestId('month-view')).toBeVisible();
+      await expect(page.getByTestId('week-view')).not.toBeVisible();
     });
   });
 
@@ -154,8 +160,8 @@ test.describe('기본 일정 관리', () => {
         endTime: '11:00',
       });
 
-      // When: 수정 버튼 클릭
-      await page.getByRole('button', { name: 'Edit event' }).click();
+      // When: 수정 버튼 클릭 (첫 번째 이벤트의 수정 버튼)
+      await page.getByRole('button', { name: 'Edit event' }).first().click();
 
       // And: 제목 수정
       await page.getByLabel('제목').clear();
@@ -166,7 +172,10 @@ test.describe('기본 일정 관리', () => {
 
       // Then: 수정된 제목이 표시됨
       await expectEventInList(page, '중요한 회의');
-      await expect(page.getByText('회의').first()).not.toBeVisible();
+
+      // And: 이전 제목이 이벤트 리스트에 없음
+      const eventList = page.getByTestId('event-list');
+      await expect(eventList.getByText('회의', { exact: true })).not.toBeVisible();
     });
 
     test('날짜 수정', async ({ page }) => {
@@ -178,8 +187,8 @@ test.describe('기본 일정 관리', () => {
         endTime: '16:00',
       });
 
-      // When: 수정 버튼 클릭
-      await page.getByRole('button', { name: 'Edit event' }).click();
+      // When: 수정 버튼 클릭 (첫 번째 이벤트의 수정 버튼)
+      await page.getByRole('button', { name: 'Edit event' }).first().click();
 
       // And: 날짜 수정
       await page.getByLabel('날짜').fill('2024-11-08');
@@ -201,12 +210,12 @@ test.describe('기본 일정 관리', () => {
         endTime: '15:00',
       });
 
-      // When: 수정 버튼 클릭
-      await page.getByRole('button', { name: 'Edit event' }).click();
+      // When: 수정 버튼 클릭 (첫 번째 이벤트의 수정 버튼)
+      await page.getByRole('button', { name: 'Edit event' }).first().click();
 
-      // And: 시간 수정
-      await page.getByLabel('시작 시간').fill('16:00');
+      // And: 시간 수정 (종료 시간을 먼저 수정하여 시간 역전 에러 방지)
       await page.getByLabel('종료 시간').fill('17:00');
+      await page.getByLabel('시작 시간').fill('16:00');
 
       // And: 일정 수정 버튼 클릭
       await page.getByTestId('event-submit-button').click();
@@ -227,11 +236,12 @@ test.describe('기본 일정 관리', () => {
         endTime: '10:00',
       });
 
-      // When: 삭제 버튼 클릭
-      await page.getByRole('button', { name: 'Delete event' }).click();
+      // When: 삭제 버튼 클릭 (첫 번째 이벤트의 삭제 버튼)
+      await page.getByRole('button', { name: 'Delete event' }).first().click();
 
-      // Then: 일정이 리스트에서 사라짐
-      await expect(page.getByText('삭제할 일정')).not.toBeVisible();
+      // Then: 일정이 이벤트 리스트에서 사라짐
+      const eventList = page.getByTestId('event-list');
+      await expect(eventList.getByText('삭제할 일정')).not.toBeVisible();
     });
 
     test('삭제 후 성공 메시지 확인', async ({ page }) => {
@@ -243,8 +253,8 @@ test.describe('기본 일정 관리', () => {
         endTime: '12:00',
       });
 
-      // When: 삭제 버튼 클릭
-      await page.getByRole('button', { name: 'Delete event' }).click();
+      // When: 삭제 버튼 클릭 (첫 번째 이벤트의 삭제 버튼)
+      await page.getByRole('button', { name: 'Delete event' }).first().click();
 
       // Then: 성공 메시지 표시
       await expectSnackbarMessage(page, '일정이 삭제되었습니다');
@@ -324,7 +334,7 @@ test.describe('기본 일정 관리', () => {
   });
 
   test.describe('6. 드래그앤드롭 (P2)', () => {
-    test.skip('주간 뷰에서 날짜 변경', async ({ page }) => {
+    test('주간 뷰에서 날짜 변경', async ({ page }) => {
       // Given: 일정이 생성되어 있음
       await createEvent(page, {
         title: '드래그 테스트',
@@ -336,18 +346,24 @@ test.describe('기본 일정 관리', () => {
       // When: 주간 뷰로 전환
       await switchView(page, 'week');
 
-      // And: 다른 날짜로 드래그
-      const event = await findEventInList(page, '드래그 테스트');
-      const targetDate = page.locator('[data-date="2024-11-08"]');
+      // 뷰 전환 완료 및 메뉴 닫힘 대기
+      await page.waitForTimeout(500);
 
-      await event.dragTo(targetDate);
+      // And: 주간 뷰에서 이벤트를 찾아서 다른 날짜로 드래그
+      const weekView = page.getByTestId('week-view');
+      const event = weekView.getByRole('button', { name: '드래그 테스트' });
+
+      // 8일 셀 찾기
+      const targetCell = weekView.getByRole('cell', { name: '8' });
+
+      await event.dragTo(targetCell);
 
       // Then: 날짜가 변경됨
       const eventList = page.getByTestId('event-list');
       await expect(eventList.getByText('2024-11-08')).toBeVisible();
     });
 
-    test.skip('월간 뷰에서 날짜 변경', async ({ page }) => {
+    test('월간 뷰에서 날짜 변경', async ({ page }) => {
       // Given: 일정이 생성되어 있음
       await createEvent(page, {
         title: '월간 드래그',
@@ -356,14 +372,20 @@ test.describe('기본 일정 관리', () => {
         endTime: '15:00',
       });
 
-      // When: 월간 뷰로 전환
-      await switchView(page, 'month');
+      // When: 월간 뷰 확인 (초기 뷰가 month이므로 전환 불필요)
+      await expect(page.getByTestId('month-view')).toBeVisible();
 
-      // And: 다른 날짜로 드래그
-      const event = await findEventInList(page, '월간 드래그');
-      const targetDate = page.locator('[data-date="2024-11-10"]');
+      // 화면 안정화 대기
+      await page.waitForTimeout(500);
 
-      await event.dragTo(targetDate);
+      // And: 월간 뷰에서 이벤트를 찾아서 다른 날짜로 드래그
+      const monthView = page.getByTestId('month-view');
+      const event = monthView.getByRole('button', { name: '월간 드래그' });
+
+      // 10일 셀 찾기
+      const targetCell = monthView.getByRole('cell', { name: '10' });
+
+      await event.dragTo(targetCell);
 
       // Then: 날짜가 변경됨
       const eventList = page.getByTestId('event-list');

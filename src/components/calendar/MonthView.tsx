@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { MonthDateCell } from './MonthDateCell';
+import { DateCell } from './DateCell';
 import { Event } from '../../types';
 import { WEEK_DAYS } from './shared/constants';
 import { calendarCellStyles } from './shared/styles';
@@ -55,9 +55,6 @@ export const MonthView = ({
             {weeks.map((week, weekIndex) => (
               <TableRow key={weekIndex}>
                 {week.map((day, dayIndex) => {
-                  const dateString = day ? formatDate(currentDate, day) : '';
-                  const holiday = holidays[dateString];
-
                   if (!day) {
                     return (
                       <TableCell
@@ -70,10 +67,15 @@ export const MonthView = ({
                     );
                   }
 
+                  const date = new Date(currentDate);
+                  date.setDate(day);
+                  const dateString = formatDate(currentDate, day);
+                  const holiday = holidays[dateString];
+
                   return (
-                    <MonthDateCell
+                    <DateCell
                       key={dayIndex}
-                      day={day}
+                      date={date}
                       dateString={dateString}
                       holiday={holiday}
                       filteredEvents={filteredEvents}
