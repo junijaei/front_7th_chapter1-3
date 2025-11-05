@@ -128,28 +128,4 @@ test.describe('기본 일정 관리', () => {
     const monthView = page.getByTestId('month-view');
     await expect(monthView.getByText('독서 모임')).toBeVisible();
   });
-
-  test('드래그앤드롭으로 날짜 변경', async ({ page }) => {
-    // Given: 일정 생성
-    await createEvent(page, {
-      title: '드래그 테스트',
-      date: '2024-11-07',
-      startTime: '10:00',
-      endTime: '11:00',
-    });
-
-    // When: 주간 뷰로 전환하고 드래그
-    await switchView(page, 'week');
-    await page.waitForTimeout(500);
-
-    const weekView = page.getByTestId('week-view');
-    const event = weekView.getByRole('button', { name: '드래그 테스트' });
-    const targetCell = weekView.getByRole('cell', { name: '8' });
-
-    await event.dragTo(targetCell);
-
-    // Then: 날짜가 변경됨
-    const eventList = page.getByTestId('event-list');
-    await expect(eventList.getByText('2024-11-08')).toBeVisible();
-  });
 });

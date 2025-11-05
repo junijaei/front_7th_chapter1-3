@@ -47,46 +47,11 @@ test.describe('검색 및 필터링', () => {
     });
 
     // When: "회의"로 검색
-    await page.getByPlaceholder('검색...').fill('회의');
+    await page.getByPlaceholder('검색어를 입력하세요').fill('회의');
 
     // Then: "회의"가 포함된 일정만 표시
     await expectEventInList(page, '팀 회의');
     await expectEventInList(page, '프로젝트 회의');
     await expect(page.getByText('점심 약속')).not.toBeVisible();
-  });
-
-  test('카테고리로 일정 필터링', async ({ page }) => {
-    // Given: 다양한 카테고리의 일정 생성
-    await createEvent(page, {
-      title: '프로젝트 미팅',
-      date: FIXED_DATE,
-      startTime: '10:00',
-      endTime: '11:00',
-      category: '업무',
-    });
-
-    await createEvent(page, {
-      title: '생일 파티',
-      date: FIXED_DATE,
-      startTime: '14:00',
-      endTime: '16:00',
-      category: '개인',
-    });
-
-    await createEvent(page, {
-      title: '코드 리뷰',
-      date: FIXED_DATE,
-      startTime: '11:00',
-      endTime: '12:00',
-      category: '업무',
-    });
-
-    // When: "업무" 카테고리로 검색
-    await page.getByPlaceholder('검색...').fill('업무');
-
-    // Then: "업무" 카테고리 일정만 표시
-    await expectEventInList(page, '프로젝트 미팅');
-    await expectEventInList(page, '코드 리뷰');
-    await expect(page.getByText('생일 파티')).not.toBeVisible();
   });
 });

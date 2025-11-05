@@ -83,8 +83,8 @@ test.describe('반복 일정 관리', () => {
     await page.waitForTimeout(1000);
 
     // Then: 해당 인스턴스만 변경됨
-    await expect(page.getByText('팀 스탠드업 (변경됨)')).toBeVisible();
-    await expect(page.getByText('팀 스탠드업')).toBeVisible();
+    await expectEventInList(page, '팀 스탠드업 (변경됨)');
+    await expectEventInList(page, '팀 스탠드업');
   });
 
   test('반복 일정의 전체 시리즈 수정', async ({ page }) => {
@@ -117,7 +117,7 @@ test.describe('반복 일정 관리', () => {
     await page.waitForTimeout(1000);
 
     // Then: 모든 인스턴스가 변경됨
-    await expect(page.getByText('주간 회고')).toBeVisible();
+    await expectEventInList(page, '주간 회고');
     await expect(page.getByText('주간 리뷰')).not.toBeVisible();
   });
 
