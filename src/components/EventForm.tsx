@@ -143,7 +143,6 @@ export const EventForm = ({
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           aria-labelledby="category-label"
-          aria-label="카테고리"
         >
           {categories.map((cat) => (
             <MenuItem key={cat} value={cat} aria-label={`${cat}-option`}>
@@ -227,11 +226,14 @@ export const EventForm = ({
       )}
 
       <FormControl fullWidth>
-        <FormLabel htmlFor="notification">알림 설정</FormLabel>
+        <FormLabel htmlFor="notification" id="notification-label">
+          알림 설정
+        </FormLabel>
         <Select
           id="notification"
           size="small"
           value={notificationTime}
+          aria-labelledby="notification-label"
           onChange={(e) => setNotificationTime(Number(e.target.value))}
         >
           {notificationOptions.map((option) => (
