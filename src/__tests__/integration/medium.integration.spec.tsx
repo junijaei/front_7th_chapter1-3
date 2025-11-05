@@ -11,10 +11,10 @@ import {
   setupMockHandlerDeletion,
   setupMockHandlerUpdating,
   setupMockHandlerListCreation,
-} from '../__mocks__/handlersUtils';
-import App from '../App';
-import { server } from '../setupTests';
-import { Event, RepeatInfo } from '../types';
+} from '../../__mocks__/handlersUtils';
+import App from '../../App';
+import { server } from '../../setupTests';
+import { Event, RepeatInfo } from '../../types';
 
 const theme = createTheme();
 
