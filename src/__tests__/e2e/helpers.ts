@@ -31,6 +31,7 @@ export interface EventData {
   description?: string;
   location?: string;
   category?: string;
+  notificationTime?: number;
 }
 
 export async function createEvent(page: Page, eventData: EventData) {
@@ -58,6 +59,10 @@ export async function createEvent(page: Page, eventData: EventData) {
   if (eventData.category) {
     await page.getByLabel('카테고리').click();
     await page.getByLabel(`${eventData.category}-option`).click();
+  }
+
+  if (eventData.notificationTime !== undefined) {
+    await page.getByLabel('알림 설정').selectOption(String(eventData.notificationTime));
   }
 
   // 일정 추가 버튼 클릭 (API 응답 대기)
