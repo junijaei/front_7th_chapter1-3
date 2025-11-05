@@ -62,7 +62,19 @@ export async function createEvent(page: Page, eventData: EventData) {
   }
 
   if (eventData.notificationTime !== undefined) {
-    await page.getByLabel('알림 설정').selectOption(String(eventData.notificationTime));
+    // MUI Select는 click 후 MenuItem 선택
+    // notificationTime 값에 따른 label 매핑
+    const notificationLabels: Record<number, string> = {
+      1: '1분 전',
+      10: '10분 전',
+      60: '1시간 전',
+      1440: '1일 전',
+      10080: '1주 전',
+    };
+    await page.getByLabel('알림 설정').click();
+    await page
+      .getByRole('option', { name: notificationLabels[eventData.notificationTime] })
+      .click();
   }
 
   // 일정 추가 버튼 클릭 (API 응답 대기)
@@ -77,10 +89,11 @@ export async function createEvent(page: Page, eventData: EventData) {
 
 /**
  * 이벤트 리스트에 특정 제목의 일정이 표시되는지 확인
+ * 반복 일정의 경우 여러 인스턴스가 있을 수 있으므로 첫 번째 요소를 확인
  */
 export async function expectEventInList(page: Page, title: string) {
   const eventList = page.getByTestId('event-list');
-  await expect(eventList.getByText(title)).toBeVisible();
+  await expect(eventList.getByText(title).first()).toBeVisible();
 }
 
 /**
