@@ -15,12 +15,12 @@ import { getRepeatTypeLabel } from '../utils/repeatTypeUtils';
 
 interface EventListProps {
   searchTerm: string;
-  setSearchTerm: (term: string) => void;
+  setSearchTerm: (_term: string) => void;
   filteredEvents: Event[];
   notifiedEvents: string[];
   notificationOptions: Array<{ value: number; label: string }>;
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent: (event: Event) => void;
+  onEditEvent: (_event: Event) => void;
+  onDeleteEvent: (_event: Event) => void;
 }
 
 export const EventList = ({

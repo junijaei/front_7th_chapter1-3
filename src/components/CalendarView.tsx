@@ -13,8 +13,8 @@ interface CalendarViewProps {
   filteredEvents: Event[];
   notifiedEvents: string[];
   holidays: Record<string, string>;
-  onDateCellClick: (dateString: string) => void;
-  onEditEvent: (event: Event) => void;
+  onDateCellClick: (_dateString: string) => void;
+  onEditEvent: (_event: Event) => void;
   activeEvent: Event | null;
 }
 

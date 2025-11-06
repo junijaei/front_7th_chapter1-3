@@ -12,7 +12,18 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '.storybook/**', '**/playwright-report/**'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '.storybook/**',
+      'storybook-static/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
+      '.coverage/**',
+      '.local-browsers/**',
+      'src/__mocks__/response/**',
+      'src/stories/**',
+    ],
   },
   // Base configuration for all files
   {
@@ -56,7 +67,6 @@ export default [
   // Main configuration for source files
   {
     files: ['**/*.{ts,tsx}'],
-    ignores: ['node_modules/**', 'dist/**', '.storybook', '*playwright-report'],
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
@@ -72,7 +82,14 @@ export default [
       ...typescriptPlugin.configs.recommended.rules,
 
       // ESLint rules
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
 
       // React rules
       'react/prop-types': 'off',
@@ -97,6 +114,16 @@ export default [
 
       // Storybook rules
       ...storybookPlugin.configs.recommended.rules,
+    },
+  },
+
+  // Storybook files configuration
+  {
+    files: ['**/*.stories.{ts,tsx}'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
     },
   },
 

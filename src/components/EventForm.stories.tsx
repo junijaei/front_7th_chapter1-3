@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import { EventForm } from './EventForm';
 import { Event, RepeatType } from '../types';
 
