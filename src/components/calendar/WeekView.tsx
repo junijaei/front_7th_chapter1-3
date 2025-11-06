@@ -18,6 +18,7 @@ interface WeekViewProps {
   currentDate: Date;
   filteredEvents: Event[];
   notifiedEvents: string[];
+  holidays: Record<string, string>;
   onDateCellClick: (dateString: string) => void;
   onEditEvent: (event: Event) => void;
 }
@@ -29,6 +30,7 @@ export const WeekView = ({
   currentDate,
   filteredEvents,
   notifiedEvents,
+  holidays,
   onDateCellClick,
   onEditEvent,
 }: WeekViewProps) => {
@@ -52,11 +54,13 @@ export const WeekView = ({
             <TableRow>
               {weekDates.map((date) => {
                 const dateString = formatDate(date, date.getDate());
+                const holiday = holidays[dateString];
                 return (
                   <DateCell
                     key={date.toISOString()}
                     date={date}
                     dateString={dateString}
+                    holiday={holiday}
                     filteredEvents={filteredEvents}
                     notifiedEvents={notifiedEvents}
                     onDateCellClick={onDateCellClick}

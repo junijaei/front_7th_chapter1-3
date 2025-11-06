@@ -35,6 +35,7 @@ export const CalendarView = ({
           currentDate={currentDate}
           filteredEvents={filteredEvents}
           notifiedEvents={notifiedEvents}
+          holidays={holidays}
           onDateCellClick={onDateCellClick}
           onEditEvent={onEditEvent}
         />

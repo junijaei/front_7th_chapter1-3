@@ -40,6 +40,7 @@ export const DraggableEvent = ({ event, notifiedEvents, onEditEvent }: Draggable
         '&:active': {
           cursor: 'grabbing',
         },
+        boxSizing: 'border-box',
       }}
     >
       <Stack direction="row" spacing={1} alignItems="center">
