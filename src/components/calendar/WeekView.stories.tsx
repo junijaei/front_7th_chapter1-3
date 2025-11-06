@@ -48,6 +48,21 @@ export const Empty: Story = {
 };
 
 /**
+ * 공휴일이 있는 주간 뷰
+ */
+export const WithHolidays: Story = {
+  args: {
+    currentDate: mockCurrentDate,
+    filteredEvents: [],
+    notifiedEvents: [],
+    holidays: {
+      '2024-11-04': '개천절',
+      '2024-11-07': '입동',
+    },
+  },
+};
+
+/**
  * 일정이 있는 주간 뷰 (기본 레이아웃)
  */
 export const WithEvents: Story = {
@@ -74,6 +89,29 @@ export const WithEvents: Story = {
         date: '2024-11-07',
         startTime: '12:00',
         endTime: '13:00',
+      }),
+    ],
+    notifiedEvents: [],
+    holidays: {},
+  },
+};
+
+/**
+ * 주 경계 테스트 (이번 주 첫날부터 마지막 날까지)
+ */
+export const WeekBoundaries: Story = {
+  args: {
+    currentDate: mockCurrentDate,
+    filteredEvents: [
+      createEvent({
+        id: '1',
+        title: '이번 주 첫날 (일요일)',
+        date: '2024-11-03',
+      }),
+      createEvent({
+        id: '2',
+        title: '이번 주 마지막 날 (토요일)',
+        date: '2024-11-09',
       }),
     ],
     notifiedEvents: [],
