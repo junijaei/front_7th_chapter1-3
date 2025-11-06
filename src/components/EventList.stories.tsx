@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { EventList } from './EventList';
 import { Event } from '../types';
 

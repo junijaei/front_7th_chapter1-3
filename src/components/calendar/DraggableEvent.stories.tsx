@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DndContext } from '@dnd-kit/core';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { DraggableEvent } from './DraggableEvent';
 import { Event } from '../../types';
 

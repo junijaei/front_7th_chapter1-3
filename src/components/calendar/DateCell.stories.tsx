@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DndContext } from '@dnd-kit/core';
 import { Table, TableBody, TableCell, TableRow } from '@mui/material';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { DateCell } from './DateCell';
 import { Event } from '../../types';
 

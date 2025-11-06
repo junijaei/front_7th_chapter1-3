@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { WeekView } from './WeekView';
 import { Event } from '../../types';
 
