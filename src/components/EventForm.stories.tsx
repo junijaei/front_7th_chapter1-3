@@ -103,31 +103,6 @@ export const Empty: Story = {
 };
 
 /**
- * 일정 추가 모드 (일부 입력됨)
- */
-export const AddMode: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '팀 회의',
-      date: '2024-11-07',
-      startTime: '10:00',
-      endTime: '11:00',
-      description: '주간 팀 회의',
-      location: '회의실 A',
-      category: '업무',
-    });
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
  * 일정 수정 모드
  */
 export const EditMode: Story = {
@@ -168,7 +143,36 @@ export const EditMode: Story = {
 };
 
 /**
- * 반복 일정 설정
+ * 모든 필드 채워진 상태
+ */
+export const AllFieldsFilled: Story = {
+  render: () => {
+    const formState = createFormState({
+      title: '중요한 프로젝트 킥오프 미팅',
+      date: '2024-11-15',
+      startTime: '09:00',
+      endTime: '12:00',
+      description:
+        '신규 프로젝트의 킥오프 미팅입니다. 전체 팀원이 참석해야 하며, 프로젝트 목표와 일정에 대해 논의합니다.',
+      location: '본사 3층 대회의실',
+      category: '업무',
+      isRepeating: false,
+      notificationTime: 60,
+    });
+
+    return (
+      <EventForm
+        formState={formState}
+        categories={categories}
+        notificationOptions={notificationOptions}
+        onSubmit={() => {}}
+      />
+    );
+  },
+};
+
+/**
+ * 반복 일정 설정 (폼 컨트롤 확장)
  */
 export const WithRecurrence: Story = {
   render: () => {
@@ -220,165 +224,7 @@ export const TimeValidationError: Story = {
 };
 
 /**
- * 모든 필드 채워진 상태
- */
-export const AllFieldsFilled: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '중요한 프로젝트 킥오프 미팅',
-      date: '2024-11-15',
-      startTime: '09:00',
-      endTime: '12:00',
-      description:
-        '신규 프로젝트의 킥오프 미팅입니다. 전체 팀원이 참석해야 하며, 프로젝트 목표와 일정에 대해 논의합니다.',
-      location: '본사 3층 대회의실',
-      category: '업무',
-      isRepeating: false,
-      notificationTime: 60,
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 매일 반복 일정
- */
-export const DailyRecurrence: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '매일 스탠드업',
-      date: '2024-11-07',
-      startTime: '09:00',
-      endTime: '09:15',
-      isRepeating: true,
-      repeatType: 'daily' as RepeatType,
-      repeatInterval: 1,
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 격주 반복 일정
- */
-export const BiweeklyRecurrence: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '격주 회의',
-      date: '2024-11-07',
-      startTime: '14:00',
-      endTime: '15:00',
-      isRepeating: true,
-      repeatType: 'weekly' as RepeatType,
-      repeatInterval: 2,
-      repeatEndDate: '2024-12-31',
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 월간 반복 일정
- */
-export const MonthlyRecurrence: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '월간 리뷰',
-      date: '2024-11-01',
-      startTime: '10:00',
-      endTime: '12:00',
-      isRepeating: true,
-      repeatType: 'monthly' as RepeatType,
-      repeatInterval: 1,
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 연간 반복 일정
- */
-export const YearlyRecurrence: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '연례 행사',
-      date: '2024-11-15',
-      startTime: '10:00',
-      endTime: '18:00',
-      isRepeating: true,
-      repeatType: 'yearly' as RepeatType,
-      repeatInterval: 1,
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 다양한 카테고리
- */
-export const DifferentCategories: Story = {
-  render: () => {
-    const formState = createFormState({
-      title: '가족 모임',
-      date: '2024-11-20',
-      startTime: '18:00',
-      endTime: '21:00',
-      category: '가족',
-    });
-
-    return (
-      <EventForm
-        formState={formState}
-        categories={categories}
-        notificationOptions={notificationOptions}
-        onSubmit={() => {}}
-      />
-    );
-  },
-};
-
-/**
- * 긴 제목과 설명
+ * 긴 제목과 설명 (텍스트 오버플로우)
  */
 export const LongContent: Story = {
   render: () => {
