@@ -11,3 +11,7 @@ node_modules
 src/__mocks__/response/*.json
 *storybook.log
 storybook-static
+
+# Visual regression test artifacts
+# 스냅샷은 버전 관리에 포함되어야 하므로 ignore하지 않음
+# src/__tests__/e2e/**/*-snapshots/
