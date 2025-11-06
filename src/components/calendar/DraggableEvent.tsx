@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import { Notifications, Repeat } from '@mui/icons-material';
-import { Box, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
 
 import { Event } from '../../types';
 import { eventBoxStyles } from './shared/styles';

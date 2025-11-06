@@ -34,9 +34,10 @@ const mockRepeatingEvent: Event = {
   notificationTime: 10,
 };
 
-const createChangeEvent = (value: string): ChangeEvent<HTMLInputElement> => ({
-  target: { value },
-} as ChangeEvent<HTMLInputElement>);
+const createChangeEvent = (value: string): ChangeEvent<HTMLInputElement> =>
+  ({
+    target: { value },
+  }) as ChangeEvent<HTMLInputElement>;
 
 describe('초기 상태', () => {
   it('initialEvent가 없으면 모든 필드가 기본값으로 설정되어야 한다', () => {
