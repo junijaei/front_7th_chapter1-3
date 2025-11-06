@@ -51,13 +51,9 @@ test.describe('알림 시스템', () => {
     // setInterval이 실행되도록 시간을 진행
     await page.clock.runFor(2000);
 
-    // Then: 알림이 표시됨 (타이틀이 빨간색 bold로 변경)
+    // Then: 알림 아이콘이 표시됨
     const eventList = page.getByTestId('event-list');
-    const eventTitle = eventList.getByText('회의');
-
-    // 타이틀이 빨간색(error)으로 표시되는지 확인
-    const color = await eventTitle.evaluate((el) => window.getComputedStyle(el).color);
-    // MUI의 error 색상은 rgb(211, 47, 47) 또는 유사한 빨간색
-    expect(color).toMatch(/rgb\(2\d{2}, 4[0-9], 4[0-9]\)/);
+    const notificationIcon = eventList.getByTestId('NotificationsActiveIcon').first();
+    await expect(notificationIcon).toBeVisible();
   });
 });
