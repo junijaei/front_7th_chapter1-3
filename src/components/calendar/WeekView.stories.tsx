@@ -43,6 +43,7 @@ export const Empty: Story = {
     currentDate: mockCurrentDate,
     filteredEvents: [],
     notifiedEvents: [],
+    holidays: {},
   },
 };
 
@@ -76,6 +77,7 @@ export const WithEvents: Story = {
       }),
     ],
     notifiedEvents: [],
+    holidays: {},
   },
 };
 
@@ -98,5 +100,6 @@ export const FullSchedule: Story = {
       });
     }),
     notifiedEvents: [],
+    holidays: {},
   },
 };
