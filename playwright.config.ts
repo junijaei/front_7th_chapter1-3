@@ -34,6 +34,20 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 
+  /* 시각적 회귀 테스트 설정 */
+  expect: {
+    toHaveScreenshot: {
+      /* 픽셀 비교 임계값 (0-1) */
+      maxDiffPixels: 100,
+      /* 픽셀 차이 임계값 비율 (0-1) */
+      maxDiffPixelRatio: 0.01,
+      /* 애니메이션 비활성화 */
+      animations: 'disabled',
+      /* CSS 애니메이션 비활성화 */
+      caret: 'hide',
+    },
+  },
+
   /* 테스트 전 개발 서버 실행 */
   webServer: {
     /* E2E 테스트용 서버 (백엔드 + 프론트엔드) */
