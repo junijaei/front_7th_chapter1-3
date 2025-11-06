@@ -1,0 +1,53 @@
+name: Update Visual Snapshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to update snapshots'
+        required: true
+        default: 'main'
+
+jobs:
+  update-snapshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Update visual snapshots
+        run: pnpm exec playwright test src/__tests__/e2e/visual-regression.spec.ts --update-snapshots
+
+      - name: Commit updated snapshots
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/__tests__/e2e/**/*-snapshots/
+          git diff --staged --quiet || git commit -m "chore: update visual regression snapshots"
+
+      - name: Push changes
+        run: git push origin ${{ github.event.inputs.branch }}
+
+      - name: Upload snapshots artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: updated-snapshots
+          path: src/__tests__/e2e/**/*-snapshots/
+          retention-days: 7
