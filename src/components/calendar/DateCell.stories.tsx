@@ -109,7 +109,7 @@ export const MultipleEvents: Story = {
 };
 
 /**
- * 긴 제목 (오버플로우 테스트)
+ * 긴 제목 (오버플로우 테스트) - 세 가지 너비에서 말줄임 표시
  */
 export const LongTitle: Story = {
   args: {
@@ -124,6 +124,49 @@ export const LongTitle: Story = {
     ],
     notifiedEvents: [],
   },
+  decorators: [
+    (Story, context) => (
+      <DndContext>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}>
+          {/* 좁은 너비 (100px) */}
+          <div>
+            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>좁은 너비 (100px)</div>
+            <Table sx={{ width: '100px', border: '1px solid #ddd' }}>
+              <TableBody>
+                <TableRow>
+                  <Story />
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* 중간 너비 (200px) */}
+          <div>
+            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>중간 너비 (200px)</div>
+            <Table sx={{ width: '200px', border: '1px solid #ddd' }}>
+              <TableBody>
+                <TableRow>
+                  <Story />
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* 넓은 너비 (300px) */}
+          <div>
+            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>넓은 너비 (300px)</div>
+            <Table sx={{ width: '300px', border: '1px solid #ddd' }}>
+              <TableBody>
+                <TableRow>
+                  <Story />
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </DndContext>
+    ),
+  ],
 };
 
 /**
