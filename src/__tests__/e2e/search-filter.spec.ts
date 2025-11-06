@@ -46,8 +46,19 @@ test.describe('검색 및 필터링', () => {
       endTime: '15:00',
     });
 
+    // When: 존재하지 않는 검색어로 검색
+    await page.getByPlaceholder('검색어를 입력하세요').fill('존재하지않는일정');
+    await page.waitForTimeout(300);
+
+    // Then: 검색 결과가 없음
+    await expect(page.getByText('팀 회의')).not.toBeVisible();
+    await expect(page.getByText('점심 약속')).not.toBeVisible();
+    await expect(page.getByText('프로젝트 회의')).not.toBeVisible();
+
     // When: "회의"로 검색
+    await page.getByPlaceholder('검색어를 입력하세요').clear();
     await page.getByPlaceholder('검색어를 입력하세요').fill('회의');
+    await page.waitForTimeout(300);
 
     // Then: "회의"가 포함된 일정만 표시
     await expectEventInList(page, '팀 회의');
