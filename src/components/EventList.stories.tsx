@@ -53,18 +53,7 @@ export const Empty: Story = {
 };
 
 /**
- * 검색 중 상태 (검색어 입력됨)
- */
-export const Searching: Story = {
-  args: {
-    searchTerm: '회의',
-    filteredEvents: [],
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 일반 일정 목록
+ * 일반 일정 목록 (기본 렌더링)
  */
 export const NormalEvents: Story = {
   args: {
@@ -95,127 +84,7 @@ export const NormalEvents: Story = {
 };
 
 /**
- * 반복 일정
- */
-export const RecurringEvents: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '매일 스탠드업',
-        date: '2024-11-07',
-        repeat: { type: 'daily', interval: 1 },
-      }),
-      createEvent({
-        id: '2',
-        title: '주간 회의',
-        date: '2024-11-08',
-        repeat: { type: 'weekly', interval: 1, endDate: '2024-12-31' },
-      }),
-      createEvent({
-        id: '3',
-        title: '월간 리뷰',
-        date: '2024-11-15',
-        repeat: { type: 'monthly', interval: 1 },
-      }),
-      createEvent({
-        id: '4',
-        title: '연례 행사',
-        date: '2024-11-20',
-        repeat: { type: 'yearly', interval: 1 },
-      }),
-    ],
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 알림이 활성화된 일정
- */
-export const WithNotifications: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '중요한 회의',
-        date: '2024-11-07',
-        notificationTime: 10,
-      }),
-      createEvent({
-        id: '2',
-        title: '긴급 미팅',
-        date: '2024-11-08',
-        notificationTime: 1,
-      }),
-      createEvent({
-        id: '3',
-        title: '프레젠테이션',
-        date: '2024-11-10',
-        notificationTime: 60,
-      }),
-    ],
-    notifiedEvents: ['1', '2', '3'],
-  },
-};
-
-/**
- * 반복 + 알림 일정
- */
-export const RecurringWithNotifications: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '매일 스탠드업',
-        date: '2024-11-07',
-        repeat: { type: 'daily', interval: 1 },
-        notificationTime: 10,
-      }),
-      createEvent({
-        id: '2',
-        title: '주간 회의',
-        date: '2024-11-08',
-        repeat: { type: 'weekly', interval: 1, endDate: '2024-12-31' },
-        notificationTime: 60,
-      }),
-    ],
-    notifiedEvents: ['1', '2'],
-  },
-};
-
-/**
- * 다양한 카테고리
- */
-export const VariousCategories: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '업무 회의',
-        category: '업무',
-      }),
-      createEvent({
-        id: '2',
-        title: '개인 약속',
-        category: '개인',
-      }),
-      createEvent({
-        id: '3',
-        title: '가족 모임',
-        category: '가족',
-      }),
-      createEvent({
-        id: '4',
-        title: '기타 일정',
-        category: '기타',
-      }),
-    ],
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 긴 제목과 설명
+ * 긴 제목과 설명 (텍스트 오버플로우)
  */
 export const LongContent: Story = {
   args: {
@@ -246,89 +115,13 @@ export const ManyEvents: Story = {
   args: {
     filteredEvents: Array.from({ length: 20 }, (_, i) =>
       createEvent({
-        id: `${i}`,
+        id: String(i),
         title: `일정 ${i + 1}`,
         date: `2024-11-${String(i + 1).padStart(2, '0')}`,
         startTime: `${9 + (i % 10)}:00`,
         endTime: `${10 + (i % 10)}:00`,
       })
     ),
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 혼합된 상태
- */
-export const MixedStates: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '일반 일정',
-        date: '2024-11-07',
-      }),
-      createEvent({
-        id: '2',
-        title: '반복 일정',
-        date: '2024-11-08',
-        repeat: { type: 'weekly', interval: 1 },
-      }),
-      createEvent({
-        id: '3',
-        title: '알림 일정',
-        date: '2024-11-09',
-      }),
-      createEvent({
-        id: '4',
-        title: '반복 + 알림',
-        date: '2024-11-10',
-        repeat: { type: 'daily', interval: 2 },
-      }),
-      createEvent({
-        id: '5',
-        title: '긴 제목을 가진 반복 알림 일정',
-        date: '2024-11-11',
-        repeat: { type: 'monthly', interval: 1 },
-        description: '자세한 설명이 포함된 일정',
-      }),
-    ],
-    notifiedEvents: ['3', '4', '5'],
-  },
-};
-
-/**
- * 다양한 알림 시간
- */
-export const VariousNotificationTimes: Story = {
-  args: {
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '1분 전 알림',
-        notificationTime: 1,
-      }),
-      createEvent({
-        id: '2',
-        title: '10분 전 알림',
-        notificationTime: 10,
-      }),
-      createEvent({
-        id: '3',
-        title: '1시간 전 알림',
-        notificationTime: 60,
-      }),
-      createEvent({
-        id: '4',
-        title: '1일 전 알림',
-        notificationTime: 1440,
-      }),
-      createEvent({
-        id: '5',
-        title: '1주 전 알림',
-        notificationTime: 10080,
-      }),
-    ],
     notifiedEvents: [],
   },
 };
