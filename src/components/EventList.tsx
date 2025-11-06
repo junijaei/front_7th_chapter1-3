@@ -36,7 +36,7 @@ export const EventList = ({
     <Stack
       data-testid="event-list"
       spacing={2}
-      sx={{ width: '30%', height: '100%', overflowY: 'auto' }}
+      sx={{ flexBasis: '30%', width: '100%', height: '100%', overflowY: 'auto' }}
     >
       <FormControl fullWidth>
         <FormLabel htmlFor="search">일정 검색</FormLabel>
