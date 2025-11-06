@@ -1,5 +1,5 @@
 import { DndContext } from '@dnd-kit/core';
-import { Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Table, TableBody, TableRow } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DateCell } from './DateCell';
@@ -109,37 +109,6 @@ export const MultipleEvents: Story = {
 };
 
 /**
- * 짧은 제목
- */
-export const ShortTitle: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: [
-      createEvent({ id: '1', title: '회의' }),
-      createEvent({ id: '2', title: '약속' }),
-      createEvent({ id: '3', title: 'A' }),
-    ],
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 중간 길이 제목
- */
-export const MediumTitle: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: [
-      createEvent({ id: '1', title: '팀 회의 및 프로젝트 리뷰' }),
-      createEvent({ id: '2', title: '클라이언트 미팅' }),
-    ],
-    notifiedEvents: [],
-  },
-};
-
-/**
  * 긴 제목 (오버플로우 테스트)
  */
 export const LongTitle: Story = {
@@ -201,7 +170,7 @@ export const ManyEvents: Story = {
 };
 
 /**
- * 반복 일정
+ * 반복 일정 (아이콘 표시)
  */
 export const RecurringEvent: Story = {
   args: {
@@ -219,7 +188,7 @@ export const RecurringEvent: Story = {
 };
 
 /**
- * 알림이 활성화된 일정
+ * 알림 활성화 (아이콘 및 강조 스타일)
  */
 export const NotifiedEvent: Story = {
   args: {
@@ -236,41 +205,7 @@ export const NotifiedEvent: Story = {
 };
 
 /**
- * 반복 + 알림 일정
- */
-export const RecurringNotifiedEvent: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '매일 스탠드업',
-        repeat: { type: 'daily', interval: 1 },
-      }),
-    ],
-    notifiedEvents: ['1'],
-  },
-};
-
-/**
- * 공휴일 + 일정
- */
-export const HolidayWithEvents: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: [
-      createEvent({ id: '1', title: '공휴일 행사' }),
-      createEvent({ id: '2', title: '가족 모임' }),
-    ],
-    notifiedEvents: [],
-    holiday: '추석',
-  },
-};
-
-/**
- * 혼합된 상태
+ * 혼합 상태 (반복 + 알림 + 긴 제목)
  */
 export const MixedStates: Story = {
   args: {
@@ -301,7 +236,7 @@ export const MixedStates: Story = {
 };
 
 /**
- * 극단적인 경우: 매우 많은 일정
+ * 극단적 오버플로우 (20개 일정)
  */
 export const ExtremeOverflow: Story = {
   args: {
@@ -315,36 +250,5 @@ export const ExtremeOverflow: Story = {
       })
     ),
     notifiedEvents: Array.from({ length: 10 }, (_, i) => `${i * 2}`),
-  },
-};
-
-/**
- * 공휴일 + 많은 일정 + 알림
- */
-export const ComplexCell: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: [
-      createEvent({
-        id: '1',
-        title: '설날 행사',
-        repeat: { type: 'yearly', interval: 1 },
-      }),
-      createEvent({
-        id: '2',
-        title: '가족 모임',
-      }),
-      createEvent({
-        id: '3',
-        title: '새해 계획 회의',
-      }),
-      createEvent({
-        id: '4',
-        title: '덕담 나누기',
-      }),
-    ],
-    notifiedEvents: ['1', '3'],
-    holiday: '설날',
   },
 };
