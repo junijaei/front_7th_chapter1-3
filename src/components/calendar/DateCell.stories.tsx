@@ -125,60 +125,77 @@ export const LongTitle: Story = {
     notifiedEvents: [],
   },
   decorators: [
-    (Story, context) => (
-      <DndContext>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-            alignItems: 'flex-start',
-          }}
-        >
-          {/* 좁은 너비 (100px) */}
-          <div>
-            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
-              좁은 너비 (100px)
-            </div>
-            <Table sx={{ width: '100px', border: '1px solid #ddd' }}>
-              <TableBody>
-                <TableRow>
-                  <Story />
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+    (Story) => {
+      const args = {
+        date: mockDate,
+        dateString: '2024-11-07',
+        filteredEvents: [
+          createEvent({
+            id: '1',
+            title:
+              '매우 긴 제목을 가진 일정입니다. 이렇게 긴 제목이 캘린더 셀에서 어떻게 표시되는지 확인하기 위한 테스트입니다.',
+          }),
+        ],
+        notifiedEvents: [],
+        onDateCellClick: () => {},
+        onEditEvent: () => {},
+      };
 
-          {/* 중간 너비 (200px) */}
-          <div>
-            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
-              중간 너비 (200px)
+      return (
+        <DndContext>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '24px',
+              alignItems: 'flex-start',
+            }}
+          >
+            {/* 좁은 너비 (100px) */}
+            <div>
+              <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
+                좁은 너비 (100px)
+              </div>
+              <Table sx={{ width: '100px', maxWidth: '100px', border: '1px solid #ddd' }}>
+                <TableBody>
+                  <TableRow>
+                    <DateCell {...args} />
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
-            <Table sx={{ width: '200px', border: '1px solid #ddd' }}>
-              <TableBody>
-                <TableRow>
-                  <Story />
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
 
-          {/* 넓은 너비 (300px) */}
-          <div>
-            <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
-              넓은 너비 (300px)
+            {/* 중간 너비 (200px) */}
+            <div>
+              <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
+                중간 너비 (200px)
+              </div>
+              <Table sx={{ width: '200px', maxWidth: '200px', border: '1px solid #ddd' }}>
+                <TableBody>
+                  <TableRow>
+                    <DateCell {...args} />
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
-            <Table sx={{ width: '300px', border: '1px solid #ddd' }}>
-              <TableBody>
-                <TableRow>
-                  <Story />
-                </TableRow>
-              </TableBody>
-            </Table>
+
+            {/* 넓은 너비 (300px) */}
+            <div>
+              <div style={{ marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' }}>
+                넓은 너비 (300px)
+              </div>
+              <Table sx={{ width: '300px', maxWidth: '300px', border: '1px solid #ddd' }}>
+                <TableBody>
+                  <TableRow>
+                    <DateCell {...args} />
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
-      </DndContext>
-    ),
+        </DndContext>
+      );
+    },
   ],
 };
 
@@ -203,24 +220,6 @@ export const MultipleLongTitles: Story = {
         title: '월간 전사 회의 with CEO and Executive Team',
       }),
     ],
-    notifiedEvents: [],
-  },
-};
-
-/**
- * 많은 일정 (스크롤 테스트)
- */
-export const ManyEvents: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: Array.from({ length: 10 }, (_, i) =>
-      createEvent({
-        id: `${i}`,
-        title: `일정 ${i + 1}`,
-        startTime: `${9 + i}:00`,
-      })
-    ),
     notifiedEvents: [],
   },
 };
@@ -288,23 +287,5 @@ export const MixedStates: Story = {
       }),
     ],
     notifiedEvents: ['3', '4'],
-  },
-};
-
-/**
- * 극단적 오버플로우 (20개 일정)
- */
-export const ExtremeOverflow: Story = {
-  args: {
-    date: mockDate,
-    dateString: '2024-11-07',
-    filteredEvents: Array.from({ length: 20 }, (_, i) =>
-      createEvent({
-        id: `${i}`,
-        title: `일정 ${i + 1}: ${i % 2 === 0 ? '짧은 제목' : '매우 긴 제목을 가진 일정입니다'}`,
-        startTime: `${9 + (i % 12)}:00`,
-      })
-    ),
-    notifiedEvents: Array.from({ length: 10 }, (_, i) => `${i * 2}`),
   },
 };
